@@ -1,9 +1,11 @@
+import { Router, useRouter } from 'next/router'
 import React from 'react'
 import Card from '../components/Card/Card'
 import useAuth from '../hooks/useAuth'
 
 function dashboard() {
   const {logout}=useAuth()
+  const router=useRouter()
   return (
     <div className='flex w-screen m-0  h-screen'>
            
@@ -22,6 +24,10 @@ function dashboard() {
                     </li>
                     <li className="sidebar__menu--item">
                         <a href="#">Candidates</a>
+                    </li>
+                    <li className="sidebar__menu--item">
+                       <button className='font-medium flex-1'
+                       onClick={()=>router.push("/CreateElection")}>Create Election</button>
                     </li>
                     
                 </ul>

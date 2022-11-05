@@ -1,6 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Head from 'next/head'
 import Image from 'next/image'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { signInWithPopup } from 'firebase/auth'
+import useAuth from '../hooks/useAuth'
+interface Inputs{
+  email:string
+  password:string
+}
 function login() {
+  const [login,setLogin]=useState(false)
+  const {signIn,signUp} = useAuth()
+  const { register,
+     handleSubmit,
+      watch,
+       formState: { errors } }
+      = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = async ({email,password}) => {
+    if(login){
+      await signIn(email,password)
+    }
+    else{
+      await signUp(email,password)
+    }
+  }
   return (
     <div className='flex'>
        <div className='max-w-xl items-center pt-28 pl-16 pr-12 h-screen'>
@@ -11,30 +34,49 @@ function login() {
         <p className='text-sm font-normal leading-4'>Register as a voter on the decentralized 
         voting platform to vote your prefered candidate</p>
 
-        <div>
-            <form>
+        
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-col mt-8'>
-                    <input className='bg-white rounded-full p-5 text-gray-500 my-3
-                    border-[1px] border-[#93278F] 
-                    w-full outline-none' type='email' name='email' id='email' placeholder='Enter your email' />
-                    <input className='bg-white rounded-full p-5 text-gray-500 my-3
-                    border-[1px] border-[#93278F] 
-                    w-full outline-none' type='password' name='password' id='password' placeholder='Enter your password' />
+
+                    <input className='bg-white rounded-full p-3 text-gray-500 mb-3
+                    border-[1.5px] border-[#93278F] 
+                    w-full outline-none' type='email'
+                     placeholder='Enter your email'
+                     {...register('email',{required:true})} />
                     
+                    {errors.email && 
+                    <p className="p-1 text-[13px] font-light text-orange-500">Please enter a valid email</p>}
+
+                    <input className='bg-white rounded-full p-3 text-gray-500 
+                    my-2 border-[1.5px] border-[#93278F] 
+                    w-full outline-none' 
+                    type='password'  
+                     placeholder='Enter your password'
+                    {...register('password',{required:true})} />
+                    
+                    {errors.password &&
+                    <p className="p-1 text-[13px] font-light text-orange-500">
+                      Your password must contain between 4 and 60 characters </p>}
+
                     <p className='text-sm my-6'>By clicking the sign up button, you agree with our 
                         Terms and Condtions</p>
-                    <button className='bg-[#93278F]
-                    rounded-full px-1 py-4 text-white font-semibold'>Sign Up</button>
+                    <button className='bg-[#93278F] rounded-full px-1 py-3 text-white font-semibold'
+                    onClick={()=>setLogin(false)}
+                    >Sign Up</button>
                 </div>
-            </form>
+            
             <div className='flex flex-col mt-5'>
-            <span className='text-sm mb-4 text-center
+            <span className=' mb-3 text-center
             '>Sign in as Admin</span>
-            <span className='text-sm mb-4 text-center'>Already have an account, Log In</span>
+            <span className=' font-medium text-center'>
+              Already have an account,</span>
+            <button onClick={()=>setLogin(true)}
+            className="text-[#93278F] text-lg font-bold">Login</button>
             </div>
+          </form>
         </div>
       </div>
-    </div>
+    
   )
 }
 
