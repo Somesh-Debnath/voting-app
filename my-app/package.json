@@ -6,12 +6,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "ethers": "^5.7.2",
     "firebase": "^9.13.0",
     "firebase-admin": "^11.2.0",
     "next": "latest",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.39.1"
+    "react-hook-form": "^7.39.1",
+    "web3modal": "^1.9.9"
   },
   "devDependencies": {
     "@types/node": "18.11.3",
