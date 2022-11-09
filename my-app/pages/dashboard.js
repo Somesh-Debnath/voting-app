@@ -126,6 +126,16 @@ function dashboard() {
             <h1 className='font-bold text-2xl'>Your Vote is Secure, Your Vote Counts</h1>
             <p className='px-1 text-sm font-normal mt-2 text-gray-500'>znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk</p>
           </div>
+        {/* {
+          cards?.map((card)=>(
+            <Card key={card.id}
+            name={card.name}
+             walletConnected={walletConnected}/>
+          ))
+
+        }<Card walletConnected={walletConnected}/> */}
+         <Card walletConnected={walletConnected}/>
+         <Card walletConnected={walletConnected}/>
          <Card walletConnected={walletConnected}/>
         </div>
     </div>

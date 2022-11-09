@@ -3,13 +3,14 @@ import Web3Modal  from 'web3modal'
 import { providers, Contract } from "ethers";
 import { useEffect, useRef, useState } from "react"; 
 import {VOTE_CONTRACT_ADDRESS,abi} from '../../constants'
-
-function Card({walletConnected}) {
+import { useRouter } from 'next/router';
+function Card({walletConnected,name,email,role}) {
   
  const [voted, setVoted] = useState(false);
  const [loading, setLoading] = useState(false);
 // const [walletConnected, setWalletConnected] = useState(false);
  const web3modalRef = useRef();
+ const router = useRouter();
 
  const getProviderOrSigner = async (needSigner = false) => {
     const provider = await web3modalRef.current.connect();
@@ -62,66 +63,23 @@ console.log(walletConnected);
           <span className="font-semibold px-2">President for Student Council</span>
       </div>
 
-              <div className='flex justify-around mt-4'>
+        <div className='flex justify-around mt-4'>
             <div className='flex flex-col items-center '>
               <div className='h-[58px] w-[58px] rounded-full'>
                   <img className="object-contain" 
                   src='/w-removebg-preview.png' alt='w' />
               </div>
-              <h3>Debanshiii Das</h3>
-              <h2 className='font-bold text-md mb-2'>Software Developer</h2>
+              <h3>{name}</h3>
+              <h2 className='font-bold text-md mb-2'>{role}</h2>
 
               <div className='flex mx-1 mb-4'>
                  {renderButton()}
                   <button className='bg-white border-[1px] border-[#93278F] ml-2
-                  text-sm rounded-2xl text-[#93278F] px-4 py-2'>View Profile</button>
+                  text-sm rounded-2xl text-[#93278F] px-4 py-2'
+                  onClick={()=>router.push("/CandidateDetails")}>View Profile</button>
               </div>
             </div>
-
-            <div className='flex flex-col items-center '>
-              <div className='h-[58px] w-[58px] rounded-full'>
-                  <img className="object-contain" 
-                  src='/w-removebg-preview.png' alt='w' />
-              </div>
-              <h3>Debanshiii Das</h3>
-              <h2 className='font-bold text-md mb-2'>Software Developer</h2>
-
-              <div className='flex mx-1 mb-2'>
-                  {renderButton()}
-                  <button className='bg-white border-[1px] border-[#93278F] ml-2
-                  text-sm rounded-2xl text-[#93278F] px-4 py-2'>View Profile</button>
-              </div>
-            </div>
-
-            <div className='flex flex-col items-center '>
-              <div className='h-[58px] w-[58px] rounded-full'>
-                  <img className="object-contain" 
-                  src='/w-removebg-preview.png' alt='w' />
-              </div>
-              <h3>Debanshiii Das</h3>
-              <h2 className='font-bold text-md mb-2'>Software Developer</h2>
-
-              <div className='flex mx-1 mb-2'>
-                  {renderButton()}
-                  <button className='bg-white border-[1px] border-[#93278F] ml-2
-                  text-sm rounded-2xl text-[#93278F] px-4 py-2'>View Profile</button>
-              </div>
-            </div>
-            <div className='flex flex-col items-center '>
-              <div className='h-[58px] w-[58px] rounded-full'>
-                  <img className="object-contain" 
-                  src='/w-removebg-preview.png' alt='w' />
-              </div>
-              <h3>Debanshiii Das</h3>
-              <h2 className='font-bold text-md mb-2'>Software Developer</h2>
-
-              <div className='flex mx-1 mb-2'>
-                  {renderButton()}
-                  <button className='bg-white border-[1px] border-[#93278F] ml-2
-                  text-sm rounded-2xl text-[#93278F] px-4 py-2'>View Profile</button>
-              </div>
-            </div>
-              </div>
+        </div>            
     </div>
   )
 }
