@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 function CandidateDetails(){
     const router=useRouter()
     return(
-        <div className='flex flex-col  w-screen '>
-            <img className="sticky w-full m-0"
+        <div className='flex flex-col'>
+            <img className="sticky w-full -mt-35"
                 src='/bgForCandidateCard.png' />
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" 
             className="absolute m-16 w-6 h-6 hover:cursor-pointer" onClick={()=>router.push("/dashboard")}>
@@ -12,11 +12,10 @@ function CandidateDetails(){
             <div className="absolute text-center text-white 
             ml-[420px] mt-16">
 
-
                 <h1 className='text-6xl p-1 mb-2'>Vote Debangsuii Das </h1>
                 <h2 className='text-2xl'>For<br/>President Student Council</h2> 
                 </div>
-                <div className='text-2xl absolute w-full  mt-56 ml-40 '>
+                <div className='text-2xl absolute w-10/12  mt-56 ml-40 '>
                     <img className="rounded-full absolute h-40 w-40 ml-[70px] mt-10" 
                         src='/w-removebg-preview.png'  alt='w'  />
                     <p className='text-2xl mt-20 ml-[280px] font-semibold 
@@ -28,8 +27,8 @@ function CandidateDetails(){
                         “ Getting me elected means leadership and growth “<br/></p>
                 </div>
                 <h2 className='text-4xl font-bold ml-24'>Campaign Promise</h2>
-                <p className='text-2xl w-[1000px] ml-24 mt-10'>Fellow FIEMIANS,</p>
-                <p className='text-xl w-[1000px] ml-24  my-20'>
+                <p className='text-2xl ml-24 mt-10'>Fellow FIEMIANS,</p>
+                <p className='text-xl ml-24 my-20'>
                     Lorem Ipsum is simply dummy 
                     text of the printing and typesetting industry. 
                     Lorem Ipsum has been the industry's 
