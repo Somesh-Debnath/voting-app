@@ -4,6 +4,7 @@ import { providers, Contract } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import Card from '../components/Card/Card.jsx'
 import useAuth from '../hooks/useAuth'
+import { getStatic } from 'ethers/lib/utils.js';
 
 
 /*
@@ -18,6 +19,12 @@ function dashboard() {
   const [walletConnected, setWalletConnected] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
+  const [cardDetails, setCardDetails] = useState([]);
+  const FormData=JSON.parse(localStorage.getItem('formData'))
+  const Candidates=JSON.parse(localStorage.getItem('people'))
+  console.log( Candidates)
+
+  
 
    const getEthereumObject=()=> window.ethereum || window.web3?.currentProvider
   const getProviderOrSigner = async (needSigner = false) => {
@@ -69,7 +76,6 @@ function dashboard() {
       console.error(err);
     }
   };
-  
   const renderButton = () => {
     if(!walletConnected){
       return  <button className='bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
@@ -84,6 +90,10 @@ function dashboard() {
      >Disconnect Wallet</button>
      }
      }
+    
+    useEffect(() => {
+      renderButton()
+    }, [])
 
   return (
     <div className='flex w-screen m-0  h-screen'>
@@ -126,20 +136,26 @@ function dashboard() {
             <h1 className='font-bold text-2xl'>Your Vote is Secure, Your Vote Counts</h1>
             <p className='px-1 text-sm font-normal mt-2 text-gray-500'>znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk</p>
           </div>
-        {/* {
-          cards?.map((card)=>(
-            <Card key={card.id}
-            name={card.name}
-             walletConnected={walletConnected}/>
-          ))
+          <div className='flex mt-5 mx-[11px]'>
 
-        }<Card walletConnected={walletConnected}/> */}
-         <Card walletConnected={walletConnected}/>
-         <Card walletConnected={walletConnected}/>
-         <Card walletConnected={walletConnected}/>
+            <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+            <span className="font-semibold px-2">{FormData.title}</span>
+          </div>
+          <div className='flex flex-row justify-around mt-4'>
+          {
+          Candidates.map((item,index)=>{
+            return <Card key={index} walletConnected={walletConnected} 
+            web3ModalRef={web3ModalRef} 
+            Name={item.Name}
+            role={item.role}/>
+          })
+          }
+        </div>
         </div>
     </div>
   )
 }
+
+
 
 export default dashboard

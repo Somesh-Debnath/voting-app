@@ -1,25 +1,30 @@
 import { Router, useRouter } from 'next/router'
 import React from 'react'
-import { useEffect } from 'react'
+import { useEffect,useState } from 'react'
 import Card from '../components/Card/Card'
 import useAuth from '../hooks/useAuth'
 
 
 function adminDashboard()
 {
-  const FormData=localStorage.getItem("formData")
-  console.log(localStorage.getItem('formData'))
-  const [cardData, setCardData] = React.useState([])
+  const [cardDetails, setCardDetails] = useState([]);
+  const FormData=JSON.parse(localStorage.getItem('formData'))
+  const Candidates=JSON.parse(localStorage.getItem('people'))
+  console.log(typeof people)
 
-  const handleCardData = () => {
-    setCardData(FormData)
-  }
+  //console.log(localStorage.getItem('formData'))
+  // console.log(typeof FormData)
+  // const [cardData, setCardData] = React.useState([])
+
+  // const handleCardData = () => {
+  //   setCardData(FormData)
+  // }
   const {logout}=useAuth()
   const router=useRouter()
 
-  useEffect(() => {
-    handleCardData()
-    }, [])
+  // useEffect(() => {
+  //   handleCardData()
+  //   }, [])
 
     console.log(typeof cardData)
   return (
@@ -68,16 +73,22 @@ function adminDashboard()
             <p className='px-1 text-sm font-normal mt-2 text-gray-500'>znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk</p>
           </div>
 
-          {/* {
-          cardData?.map((card)=>(
-            <Card key={card.id}
-            name={card.name}
-            role={card.role}
-            walletConnected={card.walletConnected}
-            />
-          ))
+          <div className='flex mt-5 mx-[11px]'>
 
-        } */}
+            <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+            <span className="font-semibold px-2">{FormData.title}</span>
+          </div>
+          <div className='flex flex-row justify-around mt-4'>
+          {
+          Candidates.map((item,index)=>{
+            return <Card key={index} walletConnected={undefined} 
+            web3ModalRef={undefined} 
+            Name={item.Name}
+            role={item.role}/>
+          })
+          }
+        </div>
+     
           
         </div>
     </div>

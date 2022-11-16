@@ -1,12 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import InputCard from '../components/Card/InputCard'
 import MuiModal from "@mui/material/Modal"
 import { useRouter } from "next/router";
 import { AnyARecord } from "dns";
-import FormCard from "../components/Card/FormCard";
-function create_vote() {
+import InputCard from "../components/Card/InputCard";
+
+
+function CreateElection() {
     const [showModal, setShowModal] = useState(false)
+    const [showModal2, setShowModal2] = useState(false)
+    const [showModal3, setShowModal3] = useState(false)
+    const [inputListSize, setInputListSize] = useState(10)
+    const inputList: any[] = []
+    const arr: any[] = []
     
+    for(let i = 0; i < inputListSize; i++) {
+    inputList.push(<InputCard handleChange={handleChange}/>)
+    }    
     const [email, setEmail] = useState("")
     const [name, setName] = useState("")
     const [role, setRole] = useState("")
@@ -23,15 +32,17 @@ function create_vote() {
     }
     const handleSubmit = (e:any) => {
         e.preventDefault()
-        console.log( typeof formData)
+       arr.push(formData)
+       console.log(arr)
         localStorage.setItem("formData", JSON.stringify(formData))
         
     }
+   // console.log(inputList)
 
     const handleModalSubmit = (e:any) => {
         e.preventDefault()
-        console.log(formData)
         setShowModal(false)
+        setShowModal2(false)
     }
   return (
     <div className='flex w-screen m-0 relative md:flex h-screen overflow-hidden'>
@@ -94,9 +105,8 @@ function create_vote() {
                     <button className='
                         rounded-xl px-8 py-3 mr-1 text-[#93278F] 
                         font-semibold border-[1px] border-[#93278F]'
-                        onClick={()=>setShowModal(true)
-                        // router.push('/FormCard')
-                        }>Add Candidate</button>
+                        onClick={(e:any)=>{setShowModal(true); e.preventDefault()}}>
+                          Add Candidate</button>
                         <button className='
                         rounded-xl px-8 py-3 mx-2 text-[#93278F] 
                         font-semibold border-[1px] border-[#93278F]'>Determine Who can Vote</button>
@@ -107,18 +117,62 @@ function create_vote() {
 
             <button className='bg-[#93278F]
                     rounded-xl px-9 py-3 text-white font-semibold'
+
                    onClick={()=>router.push('/adminDashboard')}>Create Vote</button>
             </form>
 
 
             <MuiModal open={showModal} onClose={()=>setShowModal(false)}>
-               <div className="bg-white rounded-lg w-[500px] flex items-center p-8">
-               <FormCard/>
+                <form onSubmit={handleModalSubmit} >
+                <div className='flex justify-center text-center items-center h-screen'>
+                    <div className='bg-white rounded-lg w-[400px] p-8'>
+                    <svg className="absolute top-[8rem] w-6 h-6 right-[27rem] mt-4 mr-4 cursor-pointer"
+                    onClick={()=>setShowModal(false)}
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 
+                        0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3
+                         265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/></svg>
+                        <h1 className='font-bold -center text-2xl'>Add Candidates</h1>
+                
+                        <div className='flex justify-between mt-5'>
+                           <button className='bg-[#93278F] px-3 py-1 rounded-lg text-white'
+                           onClick={(e:any)=>{setShowModal2(true);
+                         e.preventDefault()}}>Enter Manualy</button>
+                            <button className='bg-[#93278F] px-3 py-1 rounded-lg text-white'>Upload CSV</button>      
+                        </div>                  
+                    </div>
                 </div>
+             </form>
         </MuiModal>
+
+        <MuiModal open={showModal2 } onClose={()=>setShowModal2(false)}>
+            <form onSubmit={handleModalSubmit} >
+                <div className='flex justify-center text-center items-center h-screen'>
+                    <div className='bg-white rounded-lg w-[500px] p-8'>
+                    <svg className="absolute top-[2rem] w-6 h-6 right-[27rem] mt-4 mr-4 cursor-pointer"
+                    onClick={()=>setShowModal2(false)}
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3
+                            0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3
+                            265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/></svg>
+                   <div className="flex flex-col">
+                    <h1 className="font-semibold text-xl mb-2">Add Candidates</h1>  {inputList}</div>       
+                     
+                    <button className='bg-[#93278F]
+                            rounded-xl px-9 py-3 text-white font-semibold mt-4'
+                            >Add Candidate</button>
+
+                     </div>
+                        </div>
+             </form>
+                        </MuiModal>
+
+
+
+
       </div>
     </div>
   )
 }
 
-export default create_vote
+export default CreateElection;
