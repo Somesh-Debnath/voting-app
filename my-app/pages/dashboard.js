@@ -2,8 +2,10 @@ import router, { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 import { providers, Contract } from "ethers";
 import { useEffect, useRef, useState } from "react";
-import Card from "../components/Card/Card.jsx";
-import useAuth from "../hooks/useAuth";
+import Card from '../components/Card/Card.jsx'
+import useAuth from '../hooks/useAuth'
+import { getStatic } from 'ethers/lib/utils.js';
+
 
 /*
  * This function returns the first linked account found.
@@ -16,9 +18,14 @@ function dashboard() {
   const [walletConnected, setWalletConnected] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
+  const [cardDetails, setCardDetails] = useState([]);
+  const FormData=JSON.parse(localStorage.getItem('formData'))
+  const Candidates=JSON.parse(localStorage.getItem('people'))
+  console.log( Candidates)
 
-  const getEthereumObject = () =>
-    window.ethereum || window.web3?.currentProvider;
+  
+
+   const getEthereumObject=()=> window.ethereum || window.web3?.currentProvider
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -66,7 +73,7 @@ function dashboard() {
       console.error(err);
     }
   };
-
+  
   const renderButton = () => {
     if (!walletConnected) {
       return (
@@ -89,7 +96,17 @@ function dashboard() {
         </button>
       );
     }
-  };
+     else{
+      return  <button className='bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
+      text-white font-semibold text-sm top-4 z-50 right-[10rem]'
+     onClick={disconnectWallet} 
+     >Disconnect Wallet</button>
+     }
+     }
+    
+    useEffect(() => {
+      renderButton()
+    }, [])
 
   return (
     <div className="flex w-screen m-0  h-screen">
@@ -135,29 +152,30 @@ function dashboard() {
             <h3>avatar</h3>
             <h3>name</h3>
           </div>
-        </div>
-        <div className="flex flex-col mt-20 px-4">
-          <h1 className="font-bold text-2xl">
-            Your Vote is Secure, Your Vote Counts
-          </h1>
-          <p className="px-1 text-sm font-normal mt-2 text-gray-500">
-            znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk
-          </p>
-        </div>
-        {/* {
-          cards?.map((card)=>(
-            <Card key={card.id}
-            name={card.name}
-             walletConnected={walletConnected}/>
-          ))
+          <div className='flex flex-col mt-20 px-4'>
+            <h1 className='font-bold text-2xl'>Your Vote is Secure, Your Vote Counts</h1>
+            <p className='px-1 text-sm font-normal mt-2 text-gray-500'>znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk</p>
+          </div>
+          <div className='flex mt-5 mx-[11px]'>
 
-        }<Card walletConnected={walletConnected}/> */}
-        <Card walletConnected={walletConnected} />
-        <Card walletConnected={walletConnected} />
-        <Card walletConnected={walletConnected} />
-      </div>
+            <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+            <span className="font-semibold px-2">{FormData.title}</span>
+          </div>
+          <div className='flex flex-row justify-around mt-4'>
+          {
+          Candidates.map((item,index)=>{
+            return <Card key={index} walletConnected={walletConnected} 
+            web3ModalRef={web3ModalRef} 
+            Name={item.Name}
+            role={item.role}/>
+          })
+          }
+        </div>
+        </div>
     </div>
   );
 }
 
-export default dashboard;
+
+
+export default dashboard

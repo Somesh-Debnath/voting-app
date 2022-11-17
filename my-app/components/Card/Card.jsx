@@ -4,18 +4,19 @@ import { providers, Contract } from "ethers";
 import { useEffect, useRef, useState } from "react"; 
 import {VOTE_CONTRACT_ADDRESS,abi} from '../../constants'
 import { useRouter } from 'next/router';
-function Card({walletConnected,name,email,role}) {
+
+function Card({walletConnected,web3ModalRef,Name,role}) {
   
  const [voted, setVoted] = useState(false);
  const [loading, setLoading] = useState(false);
 // const [walletConnected, setWalletConnected] = useState(false);
- const web3modalRef = useRef();
+
  const router = useRouter();
-
+//console.log(FormData.name)
  const getProviderOrSigner = async (needSigner = false) => {
-    const provider = await web3modalRef.current.connect();
+    const provider = await web3ModalRef.current.connect();
     const web3Provider = new providers.Web3Provider(provider);
-
+    console.log("web3Provider2", web3Provider);
      // If user is not connected to the Goerli network, let them know and throw an error
      const { chainId } = await web3Provider.getNetwork();
      if (chainId !== 5) {
@@ -35,7 +36,7 @@ function Card({walletConnected,name,email,role}) {
       setLoading(true);
       const signer = await getProviderOrSigner(true);
       const VoteContract = new Contract(VOTE_CONTRACT_ADDRESS, abi, signer);
-      const tx = await VoteContract.giveVote();
+      const tx = await VoteContract.vote(0);
       await tx.wait();
       setVoted(true);
       setLoading(false);
@@ -49,7 +50,8 @@ console.log(walletConnected);
     if(walletConnected){
       
         return <button className='bg-[#93278F] text-white px-8 py-2
-        text-sm rounded-2xl'>Vote</button>
+        text-sm rounded-2xl'
+        onClick={giveVote}>Vote</button>
       
      
     }
@@ -57,19 +59,15 @@ console.log(walletConnected);
 
   return (
     <div className='flex flex-col shadow-lg max-h-[420px]'>
-       <div className='flex mt-5 mx-[11px]'>
+      
 
-          <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
-          <span className="font-semibold px-2">President for Student Council</span>
-      </div>
-
-        <div className='flex justify-around mt-4'>
+        
             <div className='flex flex-col items-center '>
               <div className='h-[58px] w-[58px] rounded-full'>
                   <img className="object-contain" 
                   src='/w-removebg-preview.png' alt='w' />
               </div>
-              <h3>{name}</h3>
+              <h3>{Name}</h3>
               <h2 className='font-bold text-md mb-2'>{role}</h2>
 
               <div className='flex mx-1 mb-4'>
@@ -80,7 +78,7 @@ console.log(walletConnected);
               </div>
             </div>
         </div>            
-    </div>
+    
   )
 }
 

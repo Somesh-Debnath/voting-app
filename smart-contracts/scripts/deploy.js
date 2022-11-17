@@ -8,7 +8,7 @@ async function main() {
   const BallotContract = await ethers.getContractFactory("Ballot");
 
   // here we deploy the contract
-  const deployedBallotContract = await BallotContract.deploy([""]);
+  const deployedBallotContract = await BallotContract.deploy(["abcd", "efgh"]);
 
 
   // Wait for it to finish deploying
