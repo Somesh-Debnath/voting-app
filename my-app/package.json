@@ -6,6 +6,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.10.13",
+    "@mui/styled-engine-sc": "^5.10.6",
+    "@mui/x-date-pickers-pro": "^5.0.8",
+    "dayjs": "^1.11.6",
     "ethers": "^5.7.2",
     "firebase": "^9.13.0",
     "firebase-admin": "^11.2.0",
@@ -13,6 +19,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.39.1",
+    "styled-components": "^5.3.6",
     "web3modal": "^1.9.9"
   },
   "devDependencies": {
