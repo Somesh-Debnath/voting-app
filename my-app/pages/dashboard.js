@@ -144,31 +144,30 @@ function dashboard() {
             <h3>avatar</h3>
             <h3>name</h3>
           </div>
-          <div className="flex flex-col mt-20 px-4">
-            <h1 className="font-bold text-2xl">
-              Your Vote is Secure, Your Vote Counts
-            </h1>
-            <p className="px-1 text-sm font-normal mt-2 text-gray-500">
-              znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk
-            </p>
-          </div>
-          <div className="flex mt-5 mx-[11px]">
-            <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
-            <span className="font-semibold px-2">{FormData.title}</span>
-          </div>
-          <div className="flex flex-row justify-around mt-4">
-            {Candidates.map((item, index) => {
-              return (
-                <Card
-                  key={index}
-                  walletConnected={walletConnected}
-                  web3ModalRef={web3ModalRef}
-                  Name={item.Name}
-                  role={item.role}
-                />
-              );
-            })}
-          </div>
+        </div>
+        <div className="flex flex-col mt-20 px-4">
+          <h1 className="font-bold text-2xl">
+            Your Vote is Secure, Your Vote Counts
+          </h1>
+          <p className="px-1 text-sm font-normal mt-2 text-gray-500">
+            znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk
+          </p>
+        </div>
+        <div className="flex mt-5 mx-[11px]">
+          <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+          <span className="font-semibold px-2">{FormData.title}</span>
+        </div>
+        <div className="flex flex-row justify-around mt-4">
+          {Candidates.map((item, index) => {
+            return (
+              <Card
+                key={index}
+                walletConnected={walletConnected}
+                Name={item.Name}
+                role={item.role}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

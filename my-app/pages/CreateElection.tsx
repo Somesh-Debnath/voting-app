@@ -4,13 +4,22 @@ import MuiModal from "@mui/material/Modal"
 import { useRouter } from "next/router";
 import { AnyARecord } from "dns";
 import FormCard from "../components/Card/FormCard";
+import { Dialog, TextField } from "@mui/material";
+import dayjs, { Dayjs } from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 function create_vote() {
-    const [showModal, setShowModal] = useState(false)
+    const [showModalOne, setShowModalOne] = useState(false)
+    const [showModalTwo, setShowModalTwo] = useState(false)
     
     const [email, setEmail] = useState("")
     const [name, setName] = useState("")
     const [role, setRole] = useState("")
     const [formData,setFormData] = useState([])
+    const [dateValue, setDateValue] = useState<any>(
+        dayjs('2022-08-18T09:11:54'),
+    )
     const router=useRouter()
 
     function handleChange(event:any) {
@@ -21,6 +30,17 @@ function create_vote() {
             }
         })
     }
+
+    const handleDateChange = (newValue: any) => {
+        setDateValue(newValue);
+        setFormData((prevFormData:any) => {
+            return {
+                ...prevFormData,
+                dateValue: dateValue
+            }
+        })
+    }
+
     const handleSubmit = (e:any) => {
         e.preventDefault()
         console.log( typeof formData)
@@ -28,10 +48,15 @@ function create_vote() {
         
     }
 
-    const handleModalSubmit = (e:any) => {
+    const handleModalOneSubmit = (e:any) => {
         e.preventDefault()
         console.log(formData)
-        setShowModal(false)
+        setShowModalOne(false)
+    }
+    const handleModalTwoSubmit = (e:any) => {
+        e.preventDefault()
+        console.log(formData)
+        setShowModalTwo(false)
     }
   return (
     <div className='flex w-screen m-0 relative md:flex h-screen overflow-hidden'>
@@ -57,7 +82,7 @@ function create_vote() {
         </div>
 
         
-      <div className='flex-1 font-bold h-screen fixed ml-[183px] flex flex-col'>
+      <div className='flex-1 font-bold h-screen absolute ml-[183px] flex flex-col'>
 
             <div className='flex flex-col'>
                 <div className='px-8 py-4 shadow-lg max-h-[80px] w-screen flex 
@@ -94,7 +119,7 @@ function create_vote() {
                     <button className='
                         rounded-xl px-8 py-3 mr-1 text-[#93278F] 
                         font-semibold border-[1px] border-[#93278F]'
-                        onClick={()=>setShowModal(true)
+                        onClick={()=>setShowModalOne(true)
                         // router.push('/FormCard')
                         }>Add Candidate</button>
                         <button className='
@@ -102,7 +127,9 @@ function create_vote() {
                         font-semibold border-[1px] border-[#93278F]'>Determine Who can Vote</button>
                     <button className='
                         rounded-xl px-8 py-3 text-[#93278F] 
-                        font-semibold border-[1px] border-[#93278F]'>Voting Duration</button>
+                        font-semibold border-[1px] border-[#93278F]'
+                        onClick={()=>setShowModalTwo(true)}
+                        >Voting Duration</button>
                 </div>
 
             <button className='bg-[#93278F]
@@ -111,11 +138,47 @@ function create_vote() {
             </form>
 
 
-            <MuiModal open={showModal} onClose={()=>setShowModal(false)}>
-               <div className="bg-white rounded-lg w-[500px] flex items-center p-8">
+            <Dialog open={showModalOne} onClose={()=>setShowModalOne(false)}>
+               <div className="bg-white rounded-lg w-[500px] flex items-center justify-center p-8 m-auto">
                <FormCard/>
                 </div>
+            </Dialog>
+
+            <MuiModal 
+            open={showModalTwo} 
+            onClose={()=>setShowModalTwo(false)}>
+                <form onSubmit={handleModalTwoSubmit} >
+                <div className='flex justify-center items-center h-screen'>
+                    <div className='bg-white rounded-lg w-[500px] p-8'>
+                    <svg className="absolute top-[15rem] w-6 h-6 right-[32rem] mt-4 mr-4 cursor-pointer"
+                    onClick={()=>setShowModalTwo(false)}
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 
+                        0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3
+                         265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/></svg>
+                        <h1 className='font-bold text-2xl'>Voting Duration</h1>
+                        <div className='flex flex-col mt-5'>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                className='
+                                rounded-xl px-8 py-3 mr-1 text-[#93278F] 
+                                font-semibold border-[1px] border-[#93278F]'
+                                label="Set Time"
+                                value={dateValue}
+                                onChange={handleDateChange}
+                                renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
+
+                            <button className='bg-[#93278F]
+                            rounded-xl px-9 py-3 text-white font-semibold mt-4'
+                            >Set Duration</button>
+                            </div>
+                    </div>
+                </div>
+            </form>
         </MuiModal>
+            
       </div>
     </div>
   )

@@ -25,7 +25,7 @@ const FormCard = () => {
     return ct
   }
   return (
-    <div className="flex flex-col items-center">
+    <div className=" max-w-[500px] flex flex-col items-center justify-center overflow-auto">
       <h1 className='font-bold text-2xl'>Add Candidates</h1>
       {people.map((p, index) => {
         return (
