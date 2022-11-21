@@ -18,8 +18,7 @@ const FormCard = () => {
  
  
   //console.log(people[0].id)
-
-   const addCount:number=()=>{
+function addCount(){
     ct=count+1
     setCount(ct)
     return ct
