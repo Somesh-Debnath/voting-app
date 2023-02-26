@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import InputCard from '../components/Card/InputCard'
-import MuiModal from "@mui/material/Modal"
-import { useRouter } from "next/router";
-import { AnyARecord } from "dns";
-import FormCard from "../components/Card/FormCard";
 import { Dialog, TextField } from "@mui/material";
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import MuiModal from "@mui/material/Modal";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import { useRouter } from "next/router";
+import { useState } from "react";
+import FormCard from "../components/Card/FormCard";
 function create_vote() {
     const [showModalOne, setShowModalOne] = useState(false)
     const [showModalTwo, setShowModalTwo] = useState(false)
@@ -63,7 +61,7 @@ function create_vote() {
         <div className=" w-auto flex flex-col items-center h-screen
         shadow-xl pr-12 pb-7">
             <div className="mt-4">
-                <h1>Logo</h1>
+            <button onClick={()=>router.push('/')}>Logo</button>
             </div>
             <div className=" pl-[3.5rem] mt-24">
                 <ul>
@@ -139,8 +137,9 @@ function create_vote() {
 
 
             <Dialog open={showModalOne} onClose={()=>setShowModalOne(false)}>
-               <div className="bg-white rounded-lg w-[500px] flex items-center justify-center p-8 m-auto">
-               <FormCard/>
+               <div className="bg-white rounded-lg w-[600px]
+               flex items-center justify-center py-8 m-auto">
+               <FormCard />
                 </div>
             </Dialog>
 

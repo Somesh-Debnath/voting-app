@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRouter } from 'next/router';
 function CandidateDetails(){
     const router=useRouter()
@@ -7,7 +6,7 @@ function CandidateDetails(){
             <img className="sticky w-full -mt-35"
                 src='/bgForCandidateCard.png' />
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" 
-            className="absolute m-16 w-6 h-6 hover:cursor-pointer" onClick={()=>router.push("/dashboard")}>
+            className="absolute m-16 w-6 h-6 hover:cursor-pointer" onClick={()=>router.back()}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
             <div className="absolute text-center text-white 
             ml-[420px] mt-16">

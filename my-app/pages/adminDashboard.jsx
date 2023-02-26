@@ -1,8 +1,7 @@
-import { Router, useRouter } from 'next/router'
-import React from 'react'
-import { useEffect,useState } from 'react'
-import Card from '../components/Card/Card'
-import useAuth from '../hooks/useAuth'
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import Card from '../components/Card/Card';
+import useAuth from '../hooks/useAuth';
 
 
 function adminDashboard()
@@ -33,7 +32,7 @@ function adminDashboard()
         <div className="max-w-[180px] flex flex-col items-center h-screen
         shadow-xl pr-12 pb-7 fixed">
             <div className="mt-4">
-                <h1>Logo</h1>
+                <button onClick={()=>router.push('/')}>Logo</button>
             </div>
             <div className=" pl-[3.5rem] mt-24">
                 <ul>
@@ -70,13 +69,13 @@ function adminDashboard()
           </div>
           <div className='flex flex-col mt-20 px-4'>
             <h1 className='font-bold text-2xl'>Your Vote is Secure, Your Vote Counts</h1>
-            <p className='px-1 text-sm font-normal mt-2 text-gray-500'>znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk</p>
+            <p className='px-1 text-sm font-normal mt-2 text-gray-500'>Admin can create candidates</p>
           </div>
 
           <div className='flex mt-5 mx-[11px]'>
 
             <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
-            <span className="font-semibold px-2">{FormData.title}</span>
+            <span className="font-semibold px-2">hj</span>
           </div>
           <div className='flex flex-row justify-around mt-4'>
           {

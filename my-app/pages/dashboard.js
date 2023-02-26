@@ -15,6 +15,7 @@ function dashboard() {
   const router = useRouter();
   const { logout } = useAuth();
   const [walletConnected, setWalletConnected] = useState(0);
+  const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
   const [cardDetails, setCardDetails] = useState([]);
@@ -24,6 +25,7 @@ function dashboard() {
 
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
+    
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -100,6 +102,11 @@ function dashboard() {
     renderButton();
   }, []);
 
+  const handleCallback = (childData) => {
+    setVoted(childData);
+    setVoted(1);
+  };
+
   return (
     <div className="flex w-screen m-0  h-screen">
       <div
@@ -107,7 +114,7 @@ function dashboard() {
         shadow-xl pr-12 pb-7 fixed"
       >
         <div className="mt-4">
-          <h1>Logo</h1>
+        <button onClick={()=>router.push('/')}>Logo</button>
         </div>
         <div className=" pl-[3.5rem] mt-24">
           <ul>
@@ -150,7 +157,7 @@ function dashboard() {
             Your Vote is Secure, Your Vote Counts
           </h1>
           <p className="px-1 text-sm font-normal mt-2 text-gray-500">
-            znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk
+          You can vote for only one candidate
           </p>
         </div>
         <div className="flex mt-5 mx-[11px]">
@@ -165,6 +172,8 @@ function dashboard() {
                 walletConnected={walletConnected}
                 Name={item.Name}
                 role={item.role}
+                parentCallback={handleCallback}
+                voted={voted}
               />
             );
           })}

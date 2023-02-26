@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import Head from 'next/head'
-import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { signInWithPopup } from 'firebase/auth'
 import useAuth from '../hooks/useAuth'
+//import constants from '../constants'
+
 interface Inputs{
   email:string
   password:string
@@ -24,6 +24,22 @@ function login() {
       await signUp(email,password)
     }
   }
+
+const [adminLogin,setAdminLogin]=useState(false)
+const router=useRouter()
+// const handleClick=()=>{
+//   const owner=constants.methods.admin().call();
+//   const address=web3.eth.requestAccounts().then(console.log);
+//   if(owner===address){
+//     setAdminLogin(true)
+//     setLogin(false)
+//   }
+//   else{
+//     setAdminLogin(false)
+//     //alert("You are not an admin")
+//   }
+// }
+
   return (
     <div className='flex'>
        <div className='max-w-xl items-center pt-28 pl-16 pr-12 h-screen'>
@@ -34,7 +50,6 @@ function login() {
         <p className='text-sm font-normal leading-4'>Register as a voter on the decentralized 
         voting platform to vote your prefered candidate</p>
 
-        
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-col mt-8'>
 
@@ -66,10 +81,14 @@ function login() {
                 </div>
             
             <div className='flex flex-col mt-5'>
+
+            <button type='button' onClick={()=>{ 
+            router.push('./adminDashboard')}}
+             className=' font-medium text-center'>
+             Sign in as Admin</button>
+
             <span className=' mb-3 text-center
-            '>Sign in as Admin</span>
-            <span className=' font-medium text-center'>
-              Already have an account,</span>
+            '>Already have an account,</span>
             <button onClick={()=>setLogin(true)}
             className="text-[#93278F] text-lg font-bold">Login</button>
             </div>

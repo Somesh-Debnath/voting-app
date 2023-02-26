@@ -1,6 +1,9 @@
 import { produce } from "immer";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { providers, Contract } from "ethers";
+import React, { useRef, useState } from "react";
+//import constants from '../../constants';
+import Web3Modal  from 'web3modal'
 
 interface Person {
   id: number;
@@ -13,9 +16,50 @@ const FormCard = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [count, setCount] = useState<number>(0);
   const [cardDetails, setCardDetails] = useState<Person[]>([]);
+  console.log(cardDetails);
   let ct: number = 0;
   const router=useRouter()
+  
+// const web3ModalRef=useRef<Web3Modal>(new Web3Modal())
+//   const getProviderOrSigner = async (needSigner = false) => {
+//     const provider = await web3ModalRef.current.connect();
+//     const web3Provider = new providers.Web3Provider(provider);
+
+//      // If user is not connected to the Goerli network, let them know and throw an error
+//      const { chainId } = await web3Provider.getNetwork();
+//      if (chainId !== 5) {
+//        window.alert("Change the network to Goerli");
+//        throw new Error("Change network to Goerli");
+//      }
  
+//      if (needSigner) {
+//        const signer = web3Provider.getSigner();
+//        return signer;
+//      }
+//      return web3Provider;
+//    };
+
+//   const addCandidate = async (e: any) => {
+//     e.preventDefault();
+//     try {
+//       const signer = await getProviderOrSigner(true);
+//       const contract = new Contract(
+//         constants.contractAddress,
+//         constants.contractABI,
+//         signer
+//       );
+//       const tx = await contract.addCandidate({
+//         name: cardDetails[0].Name,
+//         email: cardDetails[0].email,
+//         role: cardDetails[0].role,
+//       });
+//       await tx.wait();
+//       alert("Candidate added successfully");
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   };
+  
  
   //console.log(people[0].id)
 function addCount(){
@@ -24,14 +68,14 @@ function addCount(){
     return ct
   }
   return (
-    <div className=" max-w-[500px] flex flex-col items-center justify-center overflow-auto">
+    <div className=" w-full flex flex-col items-center justify-center overflow-auto">
       <h1 className='font-bold text-2xl'>Add Candidates</h1>
       {people.map((p, index) => {
         return (
           <div key={p.id}>
             <input
             className="bg-white rounded-lg py-2 px-5
-            border-[1px] border-[#93278F] my-5 mx-10
+            border-[1px] border-[#93278F] my-5 mx-2
             w-[150px] outline-none"
               onChange={e => {
                 const Name = e.target.value;
@@ -46,7 +90,7 @@ function addCount(){
             />
             <input
             className="bg-white rounded-lg py-2 px-5
-            border-[1px] border-[#93278F] my-5 mx-10
+            border-[1px] border-[#93278F] my-5 mx-2
             w-[150px] outline-none"
               onChange={e => {
                 const email= e.target.value;
@@ -61,7 +105,7 @@ function addCount(){
             />
               <input
             className="bg-white rounded-lg py-2 px-5
-            border-[1px] border-[#93278F] my-5 mx-10
+            border-[1px] border-[#93278F] my-5 mx-2
             w-[150px] outline-none"
               onChange={e => {
                 const role= e.target.value;
@@ -107,8 +151,9 @@ function addCount(){
     </button>
 
     <button 
-    onClick={()=>{router.push('/CreateElection')
-  localStorage.setItem('people',JSON.stringify(people))}}
+    onClick={()=>{setCardDetails(people)
+  localStorage.setItem('people',JSON.stringify(people))
+}}
     className="bg-[#93278F]
     rounded-xl px-9 py-3 text-white font-semibold mt-4">
       Submit Details
