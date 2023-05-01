@@ -23,11 +23,13 @@
     "next-auth": "^4.16.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.39.1",
     "shortid": "^2.2.16",
     "styled-components": "^5.3.6",
     "web3": "^1.7.4",
-    "web3modal": "^1.9.9"
+    "web3modal": "^1.9.9",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@types/node": "18.11.3",

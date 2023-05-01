@@ -1,22 +1,26 @@
+import { addDoc, collection, doc, getDocs, query, setDoc } from "firebase/firestore";
 import { produce } from "immer";
 import { useRouter } from "next/router";
-import { providers, Contract } from "ethers";
-import React, { useRef, useState } from "react";
+import { useContext, useState } from "react";
+import { db } from "../../utils/Firebase";
+import { AppContext, AppContextType } from "../../pages/_app";
+
+
 //import constants from '../../constants';
-import Web3Modal  from 'web3modal'
 
 interface Person {
   id: number;
   Name: string;
-  email: string;
-  role: string;
+  Email: string;
+  Role: string;
 }
 
 const FormCard = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [count, setCount] = useState<number>(0);
-  const [cardDetails, setCardDetails] = useState<Person[]>([]);
-  console.log(cardDetails);
+  const {cardDetails, setCardDetails} = useContext(AppContext) as AppContextType;
+  // const {formContext, setFormContext} = useContext(AppContext);
+  //console.log(cardDetails);
   let ct: number = 0;
   const router=useRouter()
   
@@ -67,6 +71,12 @@ function addCount(){
     setCount(ct)
     return ct
   }
+
+  async function handleClick(){
+    setCardDetails(people)
+  }
+
+
   return (
     <div className=" w-full flex flex-col items-center justify-center overflow-auto">
       <h1 className='font-bold text-2xl'>Add Candidates</h1>
@@ -96,11 +106,11 @@ function addCount(){
                 const email= e.target.value;
                 setPeople(currentPeople =>
                   produce(currentPeople, v => {
-                    v[index].email= email;
+                    v[index].Email= email;
                   })
                 );
               }}
-              value={p.email}
+              value={p.Email}
               placeholder="email"
             />
               <input
@@ -111,11 +121,11 @@ function addCount(){
                 const role= e.target.value;
                 setPeople(currentPeople =>
                   produce(currentPeople, v => {
-                    v[index].role= role;
+                    v[index].Role= role;
                   })
                 );
               }}
-              value={p.role}
+              value={p.Role}
               placeholder="role"
             />
             <button
@@ -141,8 +151,8 @@ function addCount(){
                 {
                   id:addCount(),
                   Name: "",
-                  email: "",
-                  role: ""
+                  Email: "",
+                  Role: ""
                 }
               ]);
             }}
@@ -151,9 +161,7 @@ function addCount(){
     </button>
 
     <button 
-    onClick={()=>{setCardDetails(people)
-  localStorage.setItem('people',JSON.stringify(people))
-}}
+    onClick={()=>{handleClick()}}
     className="bg-[#93278F]
     rounded-xl px-9 py-3 text-white font-semibold mt-4">
       Submit Details
