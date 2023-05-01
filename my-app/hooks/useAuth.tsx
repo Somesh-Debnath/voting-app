@@ -1,17 +1,15 @@
-import React from 'react'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  User,
-
+  User
 } from 'firebase/auth'
+import React from 'react'
 
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { auth } from '../utils/Firebase'
-import { async } from '@firebase/util'
 
 interface  AuthProviderProps{
   children:React.ReactNode

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.7.0 <0.9.0;
-
+import "hardhat/console.sol";
 contract Vote {
     
     struct Voter {
@@ -20,7 +20,7 @@ contract Vote {
     }
 
   struct Election{
-     Candidate [] candidatesDetails;
+     Candidate[] candidatesDetails;
      string title;
      string description;
      string org;
@@ -32,7 +32,6 @@ contract Vote {
     uint public test;
     
     mapping(address => Voter) public voters;
-    voters [] public votersDetails;
 
     Candidate[] public candidates;
     mapping(uint256 => Candidate) public candidatesDetail;
@@ -41,6 +40,7 @@ contract Vote {
     constructor() {
         admin = msg.sender;
         voters[admin].weight = 1;
+        console.log(admin);
     }
         
     //     for (uint i = 0; i < proposalNames.length; i++) {
@@ -51,7 +51,7 @@ contract Vote {
     //         }));
     //     }
     // }
-
+   
    function addCandidate(string memory _name,string memory _email,string memory _role,uint256 _id)  public {
        Candidate memory newCandidate=Candidate({
            name:_name,
@@ -69,36 +69,31 @@ contract Vote {
 //    }
          
    
-   function createVote(string memory _title, string memory _description,string memory _org) public {
-    for(uint i=0;i<candidates.length;i++){
-              Election.candidatesDetails.push(candidates[i]);
-         }
-          Election memory newElection=Election({
-                 //add candidate details
-              candidatesDetails: candidatesDetail,
-               title:_title,
-               description:_description,
-               org:_org
-           });
-           elections.push(newElection);
+//    function createVote(string memory _title, string memory _description,string memory _org) public {
+//           Election memory newElection=Election({
+//               //add candidate details
+//               candidatesDetails: candidates,
+//                title:_title,
+//                description:_description,
+//                org:_org
+//            });
+//            elections.push(newElection);
           
-      }
+//       }
    
    
-    function giveRightToVote(address[] memory Voters) external {
-        for(uint i=0;i<Voters.length;i++){
-             require(
+    function giveRightToVote(address voter) external {
+        
+        require(
             msg.sender == admin,
             "Only admin can give right to vote."
         );
         require(
-            !Voters[i].voted,
+            !voters[voter].voted,
             "The voter already voted."
         );
-            voters[Voters[i]].weight = 1;
-        }
-       
-       
+        require(voters[voter].weight == 0);
+        voters[voter].weight = 1;
     }
 
  

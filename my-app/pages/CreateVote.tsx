@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import MuiModal from "@mui/material/Modal"
+import MuiModal from "@mui/material/Modal";
 import { useRouter } from "next/router";
-import { AnyARecord } from "dns";
+import { useState } from "react";
 import InputCard from "../components/Card/InputCard";
 
 
@@ -112,7 +111,8 @@ function CreateElection() {
                         font-semibold border-[1px] border-[#93278F]'>Determine Who can Vote</button>
                     <button className='
                         rounded-xl px-8 py-3 text-[#93278F] 
-                        font-semibold border-[1px] border-[#93278F]'>Voting Duration</button>
+                        font-semibold border-[1px] border-[#93278F]'>Voting Duration
+                    </button>
                 </div>
 
             <button className='bg-[#93278F]
@@ -156,7 +156,7 @@ function CreateElection() {
                             0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3
                             265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/></svg>
                    <div className="flex flex-col">
-                    <h1 className="font-semibold text-xl mb-2">Add Candidates</h1>  {inputList}</div>       
+                    <h1 className="font-semibold text-xl mb-2">Add Candidates</h1>{inputList}</div>       
                      
                     <button className='bg-[#93278F]
                             rounded-xl px-9 py-3 text-white font-semibold mt-4'
@@ -166,10 +166,6 @@ function CreateElection() {
                         </div>
              </form>
                         </MuiModal>
-
-
-
-
       </div>
     </div>
   )

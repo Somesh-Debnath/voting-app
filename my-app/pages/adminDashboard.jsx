@@ -1,15 +1,24 @@
-import { Router, useRouter } from 'next/router'
-import React from 'react'
-import { useEffect,useState } from 'react'
-import Card from '../components/Card/Card'
-import useAuth from '../hooks/useAuth'
+
+import Card from '../components/Card/Card';
+
+import { collection, getDocs } from "firebase/firestore";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+
+import useAuth from "../hooks/useAuth";
+import { db } from "../utils/Firebase";
+import Sidebar from '../components/Sidebar/Sidebar';
 
 
 function adminDashboard()
 {
+  const candidateQuery=collection(db,'Elections');
+  const [docs,loading,error]=useCollectionData(candidateQuery);
   const [cardDetails, setCardDetails] = useState([]);
   const FormData=JSON.parse(localStorage.getItem('formData'))
-  const Candidates=JSON.parse(localStorage.getItem('people'))
+  const [users,setUsers]=useState([]);
+  
   console.log(typeof people)
 
   //console.log(localStorage.getItem('formData'))
@@ -22,39 +31,20 @@ function adminDashboard()
   const {logout}=useAuth()
   const router=useRouter()
 
-  // useEffect(() => {
-  //   handleCardData()
-  //   }, [])
+  useEffect(() => {
+    const getCandidates=async()=>{
+      const getCandidates=await getDocs(candidateQuery);
+      const candidates=getCandidates.docs.map((doc)=>doc.data());
+      setUsers(candidates);
+    }
+    getCandidates();
+    }, [])
 
     console.log(typeof cardData)
   return (
     <div className='flex w-screen m-0  h-screen'>
            
-        <div className="max-w-[180px] flex flex-col items-center h-screen
-        shadow-xl pr-12 pb-7 fixed">
-            <div className="mt-4">
-                <h1>Logo</h1>
-            </div>
-            <div className=" pl-[3.5rem] mt-24">
-                <ul>
-                    <li className="sidebar__menu--item">
-                        <a href="#">Dashboard</a>
-                    </li>
-                    <li className="sidebar__menu--item">
-                        <a href="#">Voters</a>
-                    </li>
-                    <li className="sidebar__menu--item">
-                        <a href="#">Candidates</a>
-                    </li>
-                    <li className="sidebar__menu--item">
-                       <button className='font-medium flex-1'
-                       onClick={()=>router.push("/CreateElection")}>Create Election</button>
-                    </li>
-                    
-                </ul>
-              </div>
-              <button className='mt-48 font-medium' onClick={logout} >Logout</button>
-        </div>
+      <Sidebar/>
        <div className='flex flex-col w-screen ml-[183px]'>
           <div className='px-8 py-4 shadow-lg max-h-[80px] fixed 
           top-0 z-50  w-full flex  bg-opacity-100'>
@@ -70,28 +60,37 @@ function adminDashboard()
           </div>
           <div className='flex flex-col mt-20 px-4'>
             <h1 className='font-bold text-2xl'>Your Vote is Secure, Your Vote Counts</h1>
-            <p className='px-1 text-sm font-normal mt-2 text-gray-500'>znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk</p>
+            <p className='px-1 text-sm font-normal mt-2 text-gray-500'>Admin can create candidates</p>
           </div>
 
           <div className='flex mt-5 mx-[11px]'>
-
+{/* 
             <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
-            <span className="font-semibold px-2">{FormData.title}</span>
+            <span className="font-semibold px-2">hj</span> */}
           </div>
-          <div className='flex flex-row justify-around mt-4'>
-          {
-          Candidates.map((item,index)=>{
-            return <Card key={index} walletConnected={undefined} 
-            web3ModalRef={undefined} 
-            Name={item.Name}
-            role={item.role}/>
-          })
-          }
-        </div>
-     
-          
-        </div>
-    </div>
+          {loading && "Loading..."}
+          {users && users.map((doc) => (
+            <div>
+              <div className="flex mt-5 mx-[11px]">
+              <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+              <span className="font-semibold px-2">{doc.title}</span>
+              </div>
+              <div className="flex flex-row justify-around mt-4">
+                {doc.people.map((person) => (
+                  <Card
+                    key={person.id}
+                    Name={person.Name}
+                    role={person.Role}
+                   
+                    
+                  />
+                ))}
+                 </div>
+                 </div>
+          ))}
+            </div>
+        </div>       
+
   )
 }
 

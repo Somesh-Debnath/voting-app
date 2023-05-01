@@ -1,32 +1,53 @@
-import { useEffect, useRef, useState } from "react";
-import InputCard from '../components/Card/InputCard'
-import MuiModal from "@mui/material/Modal"
-import { useRouter } from "next/router";
-import { AnyARecord } from "dns";
-import FormCard from "../components/Card/FormCard";
+import { doc, setDoc } from "@firebase/firestore";
 import { Dialog, TextField } from "@mui/material";
-import dayjs, { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import MuiModal from "@mui/material/Modal";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import { useRouter } from "next/router";
+import { useContext, useRef, useState } from "react";
+import FormCard from "../components/Card/FormCard";
+import { db } from "../utils/Firebase";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { AppContext, AppContextType } from "./_app";
+
 function create_vote() {
     const [showModalOne, setShowModalOne] = useState(false)
     const [showModalTwo, setShowModalTwo] = useState(false)
+    const {cardDetails, setCardDetails} = useContext(AppContext) as AppContextType;
     
-    const [email, setEmail] = useState("")
-    const [name, setName] = useState("")
-    const [role, setRole] = useState("")
-    const [formData,setFormData] = useState([])
+    const [formData,setFormData] = useState(
+        {title: '', description: '', orgName: '',
+        people:{
+            name: '', email: '', role: ''
+        }, dateValue: ''}
+    )
+    
     const [dateValue, setDateValue] = useState<any>(
         dayjs('2022-08-18T09:11:54'),
     )
     const router=useRouter()
+
 
     function handleChange(event:any) {
         setFormData((prevFormData:any) => {
             return {
                 ...prevFormData,
                 [event.target.name]: event.target.value
+            }
+        })
+    }
+
+    function handlePeopleChange(event:any) {
+        const {name, value} = event.target
+        setFormData((prevFormData:any) => {
+            return {
+                ...prevFormData,
+                people: {
+                    ...prevFormData.people,
+                    [name]: value
+                }
             }
         })
     }
@@ -41,18 +62,57 @@ function create_vote() {
         })
     }
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = async (e:any) => {
         e.preventDefault()
-        console.log( typeof formData)
-        localStorage.setItem("formData", JSON.stringify(formData))
         
+       const q=query(collection(db, "Elections"));
+       const querySnapshot = await getDocs(q);
+       const qdata = querySnapshot.docs.map
+       ((doc: { data: () => any; }) => doc.data());
+        console.log(qdata)
+        addDoc(collection(db, `Elections/`), {
+            title: formData.title,
+            description: formData.description,
+            orgName: formData.orgName,
+           people:  cardDetails.map((p)=>{return{
+                Name:p.Name,
+                Email:p.Email,
+                Role:p.Role
+            }}),
+        });
+        //console.log(formData)
+        //console.log("cardDetails", cardDetails)
+
+        const q2=query(collection(db,`Elections`,"candidates"));
+        const querySnapshot2=await getDocs(q2);
+        const queryData2=querySnapshot2.docs.map((doc)=>doc.data());
+        console.log(queryData2);
+        
+  
+       cardDetails.map((p)=>{
+         queryData2.map((q)=>{
+            if(p.Email==q.Email){
+              alert("Candidate already exists");
+              return;
+            }
+            if(p.Email=="" || p.Name=="" || p.Role==""){
+              alert("Please fill all the details");
+              return;
+            }
+     
+          addDoc(collection(db,`Elections/${q.id}`,"candidates"),{
+            Name:p.Name,
+            Email:p.Email,
+            Role:p.Role
+          })
+          console.log(p)
+        })
+      }) 
+        //localStorage.setItem("formData", JSON.stringify(formData))
+        
+        e.target.reset()
     }
 
-    const handleModalOneSubmit = (e:any) => {
-        e.preventDefault()
-        console.log(formData)
-        setShowModalOne(false)
-    }
     const handleModalTwoSubmit = (e:any) => {
         e.preventDefault()
         console.log(formData)
@@ -63,7 +123,7 @@ function create_vote() {
         <div className=" w-auto flex flex-col items-center h-screen
         shadow-xl pr-12 pb-7">
             <div className="mt-4">
-                <h1>Logo</h1>
+            <button onClick={()=>router.push('/')}>Logo</button>
             </div>
             <div className=" pl-[3.5rem] mt-24">
                 <ul>
@@ -98,25 +158,32 @@ function create_vote() {
             <form onSubmit={handleSubmit} className='w-[800px] p-8'>
                 <div className=' flex flex-col '>
                     <h2 className='font-bold mb-2'>TITLE OF THE VOTE</h2>
-                    <input className='bg-white rounded-lg p-2
+                    <input 
+                    className='bg-white rounded-lg p-2
                     border-[1px] border-[#93278F] 
                     w-full outline-none' type='text' 
                     name="title"
+                    value={formData.title}
                     onChange={handleChange}  placeholder='TITLE' />
-                    <input className='bg-white rounded-lg p-4  my-3
+                    <input 
+                    className='bg-white rounded-lg p-4  my-3
                     border-[1px] border-[#93278F] 
                     w-full outline-none' type='text'
                     name="description"
+                    value={formData.description}
                     onChange={handleChange} placeholder='DESCRIPTION' />
                     <h2 className='font-bold mb-2'>Name of the Organization</h2>
-                    <input className='bg-white rounded-lg p-2
+                    <input 
+                    className='bg-white rounded-lg p-2
                     border-[1px] border-[#93278F] 
                     w-full outline-none' type='text'
-                    name="org"
+                    name="orgName"
+                    value={formData.orgName}
                     onChange={handleChange} />
                 </div>
                 <div className='flex my-10 '>
-                    <button className='
+                    <button type="button"
+                    className='
                         rounded-xl px-8 py-3 mr-1 text-[#93278F] 
                         font-semibold border-[1px] border-[#93278F]'
                         onClick={()=>setShowModalOne(true)
@@ -139,8 +206,10 @@ function create_vote() {
 
 
             <Dialog open={showModalOne} onClose={()=>setShowModalOne(false)}>
-               <div className="bg-white rounded-lg w-[500px] flex items-center justify-center p-8 m-auto">
-               <FormCard/>
+               <div className="bg-white rounded-lg w-[600px]
+               flex items-center justify-center py-8 m-auto">
+               <FormCard />
+               <button onClick={()=>setShowModalOne(false)}>sub</button>
                 </div>
             </Dialog>
 

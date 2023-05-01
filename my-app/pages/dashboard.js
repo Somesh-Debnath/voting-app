@@ -1,10 +1,13 @@
-import router, { useRouter } from "next/router";
-import Web3Modal from "web3modal";
-import { providers, Contract } from "ethers";
+import { providers } from "ethers";
+import { collection, getDocs } from "firebase/firestore";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import Web3Modal from "web3modal";
 import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
-import { getStatic } from "ethers/lib/utils.js";
+import Sidebar from '../components/Sidebar/Sidebar';
+import { db } from "../utils/Firebase";
 
 /*
  * This function returns the first linked account found.
@@ -15,21 +18,49 @@ function dashboard() {
   const router = useRouter();
   const { logout } = useAuth();
   const [walletConnected, setWalletConnected] = useState(0);
+  const [users,setUsers]=useState([]);
+  
+  //const query=collection(db,'Elections','Elections');
+  const candidateQuery=collection(db,'Elections');
+  const [docs,loading,error]=useCollectionData(candidateQuery);
+
+  const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
   const [cardDetails, setCardDetails] = useState([]);
+  const [elections,setElections]=useState([]);
   const FormData = JSON.parse(localStorage.getItem("formData"));
-  const Candidates = JSON.parse(localStorage.getItem("people"));
-  console.log(Candidates);
+  //const Candidates = JSON.parse(localStorage.getItem("people"));
+ // console.log(Candidates);
 
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
+  
+    
+  useEffect(()=>{
+    // const getElections=async()=>{
+    //   const getElections=await getDocs(query);
+    //   const elections=getElections.docs.map((doc)=>doc.data());
+    //   setElections(elections);
+    // }
+    const getCandidates=async()=>{
+      const getCandidates=await getDocs(candidateQuery);
+      const candidates=getCandidates.docs.map((doc)=>doc.data());
+      setUsers(candidates);
+    }
+    getCandidates();
+    //getElections();
+    console.log(users);
+    renderButton();
+  },[])
+  
+  console.log(docs);
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
     const provider = await web3ModalRef.current.connect();
     const web3Provider = new providers.Web3Provider(provider);
-    console.log("web3Provider", web3Provider);
+    //console.log("web3Provider", web3Provider);
 
     // If user is not connected to the Goerli network, let them know and throw an error
     const { chainId } = await web3Provider.getNetwork();
@@ -46,7 +77,7 @@ function dashboard() {
   };
 
   web3ModalRef.current = new Web3Modal({
-    network: "goerli",
+    network: "sepolia",
     providerOptions: {},
     disableInjectedProvider: false,
   });
@@ -58,7 +89,7 @@ function dashboard() {
       await getProviderOrSigner();
       setWalletConnected(1);
     } catch (err) {
-      console.error(err);
+      //console.error(err);
     }
   };
 
@@ -68,7 +99,7 @@ function dashboard() {
       await web3ModalRef.current.clearCachedProvider();
       setWalletConnected(0);
     } catch (err) {
-      console.error(err);
+      //console.error(err);
     }
   };
 
@@ -96,36 +127,14 @@ function dashboard() {
     }
   };
 
-  useEffect(() => {
-    renderButton();
-  }, []);
+  const handleCallback = (childData) => {
+    setVoted(childData);
+    setVoted(1);
+  };
 
   return (
     <div className="flex w-screen m-0  h-screen">
-      <div
-        className="max-w-[180px] flex flex-col items-center h-screen
-        shadow-xl pr-12 pb-7 fixed"
-      >
-        <div className="mt-4">
-          <h1>Logo</h1>
-        </div>
-        <div className=" pl-[3.5rem] mt-24">
-          <ul>
-            <li className="sidebar__menu--item">
-              <a href="#">Dashboard</a>
-            </li>
-            <li className="sidebar__menu--item">
-              <a href="#">Voters</a>
-            </li>
-            <li className="sidebar__menu--item">
-              <a href="#">Candidates</a>
-            </li>
-          </ul>
-        </div>
-        <button className="mt-48 font-medium" onClick={logout}>
-          Logout
-        </button>
-      </div>
+      <Sidebar />
       <div className="flex flex-col w-screen ml-[183px]">
         <div
           className="px-8 py-4 shadow-lg max-h-[80px] fixed 
@@ -150,27 +159,36 @@ function dashboard() {
             Your Vote is Secure, Your Vote Counts
           </h1>
           <p className="px-1 text-sm font-normal mt-2 text-gray-500">
-            znbvjsdbvjkfdkjvbkjfbvkjsdnv kjdvkjnjk
+          You can vote for only one candidate
           </p>
         </div>
-        <div className="flex mt-5 mx-[11px]">
-          <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
-          <span className="font-semibold px-2">{FormData.title}</span>
-        </div>
-        <div className="flex flex-row justify-around mt-4">
-          {Candidates.map((item, index) => {
-            return (
-              <Card
-                key={index}
-                walletConnected={walletConnected}
-                Name={item.Name}
-                role={item.role}
-              />
-            );
-          })}
+
+        
+        
+          {loading && "Loading..."}
+          {users && users.map((doc) => (
+            <div>
+              <div className="flex mt-5 mx-[11px]">
+              <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+              <span className="font-semibold px-2">{doc.title}</span>
+              </div>
+              <div className="flex flex-row justify-around mt-4">
+                {doc.people.map((person) => (
+                  <Card
+                    key={person.id}
+                    walletConnected={walletConnected}
+                    Name={person.Name}
+                    role={person.Role}
+                    parentCallback={handleCallback}
+                    voted={voted}
+                  />
+                ))}
+            </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+  
   );
 }
 

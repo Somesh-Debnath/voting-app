@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/dashboard.jsx", "components/Card/Card.jsx", "components/Card/Card.jsx", "pages/adminDashboard.jsx", "context/AppContext.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/dashboard.jsx", "components/Card/Card.jsx", "components/Card/Card.jsx", "pages/adminDashboard.jsx", "context/AppContext.jsx", "constants/web3.js", "constants/index.js"],
   "exclude": ["node_modules"]
 }

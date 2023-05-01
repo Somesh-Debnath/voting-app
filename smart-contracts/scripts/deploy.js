@@ -3,19 +3,20 @@ const { ethers } = require("hardhat");
 async function main() {
   /*
   A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
-  so BallotContract here is a factory for instances of our Ballot contract.
+  so voteContract here is a factory for instances of our vote contract.
   */
-  const BallotContract = await ethers.getContractFactory("Ballot");
+  const voteContract = await ethers.getContractFactory("Vote");
 
   // here we deploy the contract
-  const deployedBallotContract = await BallotContract.deploy(["abcd", "efgh"]);
+  const deployedvoteContract = await voteContract.deploy();
 
 
   // Wait for it to finish deploying
-  await deployedBallotContract.deployed();
+  await deployedvoteContract.deployed();
 
   // print the address of the deployed contract
-  console.log("Ballot Contract Address:", deployedBallotContract.address);
+  console.log("vote Contract Address:", deployedvoteContract.address);
+ // console.log(msg.sender)
 }
 
 // Call the main function and catch if there is any error
