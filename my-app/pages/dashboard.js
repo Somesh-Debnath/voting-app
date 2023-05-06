@@ -172,10 +172,12 @@ function dashboard() {
               <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
               <span className="font-semibold px-2">{doc.title}</span>
               </div>
+              
               <div className="flex flex-row justify-around mt-4">
-                {doc.people.map((person) => (
+                {doc.people.map((person,indx) => (
                   <Card
-                    key={person.id}
+                    key={person.uId}
+                    indx={indx}
                     walletConnected={walletConnected}
                     Name={person.Name}
                     role={person.Role}

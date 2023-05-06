@@ -4,6 +4,7 @@ import { AuthProvider } from '../hooks/useAuth'
 import {createContext, useState} from "react"
 
 export interface Person {
+  Image: any;
   id: number;
   Name: string;
   Email: string;

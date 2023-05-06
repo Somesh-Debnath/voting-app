@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { doc, setDoc, updateDoc } from "@firebase/firestore";
+import { db} from "../../utils/Firebase";
 import Web3Modal  from 'web3modal'
 //import web3 from '../../constants/web3';
 import { providers, Contract, ethers } from "ethers";
@@ -7,9 +9,9 @@ import {VOTE_CONTRACT_ADDRESS,abi} from '../../constants'
 import constants from '../../constants';
 import { useRouter } from 'next/router';
 
-function Card({walletConnected,Name,role,parentCallback,voted}) {
+function Card({walletConnected,Name,role,parentCallback,voted,indx}) {
   
- //const [voted, setVoted] = useState(0);
+//const [voted, setVoted] = useState(0);
  const [loading, setLoading] = useState(false);
  const [owner, setOwner] = useState('');
  const web3ModalRef = useRef();
@@ -75,10 +77,17 @@ console.log(walletConnected);
         onClick={vot}>Vote</button>   
     }
   }
- const vot=()=>{
-  if(voted===0){
+ const vot=(id,count)=>{
+   if(voted===0){
+  //   //voting
+  //   const voteDoc=doc(db,"Elections",id);
+  //   updateDoc(voteDoc,{
+  //     [`Elections.people.${Name}`]: count + 1,
+      
+  //   });
     alert("Successfully Voted for "+Name);
     parentCallback(1);
+
   }
  }
   return (

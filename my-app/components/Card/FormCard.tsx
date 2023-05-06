@@ -6,13 +6,15 @@ import { db } from "../../utils/Firebase";
 import { AppContext, AppContextType } from "../../pages/_app";
 
 
+
 //import constants from '../../constants';
 
-interface Person {
+export interface Person {
   id: number;
   Name: string;
   Email: string;
   Role: string;
+  Image: string;
 }
 
 const FormCard = () => {
@@ -110,6 +112,7 @@ function addCount(){
                   })
                 );
               }}
+              type="email"
               value={p.Email}
               placeholder="email"
             />
@@ -127,6 +130,22 @@ function addCount(){
               }}
               value={p.Role}
               placeholder="role"
+            />
+            <input
+            className=""
+            type="file"
+            accept="image/*"
+            name="Image"
+              onChange={e => {
+                const image= e.target.value;
+                setPeople(currentPeople =>
+                  produce(currentPeople, v => {
+                    v[index].Image=image;
+                  })
+                );
+              }}
+              value={p.Image}
+              placeholder="image"
             />
             <button
               onClick={() => {
@@ -152,7 +171,8 @@ function addCount(){
                   id:addCount(),
                   Name: "",
                   Email: "",
-                  Role: ""
+                  Role: "",
+                  Image: "",
                 }
               ]);
             }}
@@ -165,6 +185,7 @@ function addCount(){
     className="bg-[#93278F]
     rounded-xl px-9 py-3 text-white font-semibold mt-4">
       Submit Details
+      {/* add toast  - https://react-hot-toast.com/*/}
     </button>
 </div>
 

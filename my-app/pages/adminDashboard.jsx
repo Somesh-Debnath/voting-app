@@ -78,11 +78,9 @@ function adminDashboard()
               <div className="flex flex-row justify-around mt-4">
                 {doc.people.map((person) => (
                   <Card
-                    key={person.id}
+                    key={person.uId}
                     Name={person.Name}
-                    role={person.Role}
-                   
-                    
+                    role={person.Role}                   
                   />
                 ))}
                  </div>
