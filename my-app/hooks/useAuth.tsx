@@ -9,7 +9,8 @@ import React from 'react'
 
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { auth } from '../utils/Firebase'
+import { auth, db } from '../utils/Firebase'
+import { doc, setDoc } from 'firebase/firestore'
 
 interface  AuthProviderProps{
   children:React.ReactNode
@@ -59,13 +60,25 @@ export const AuthProvider=({children}:AuthProviderProps)=> {
   const signUp=async (email:string,password:string)=>{
     setLoading(true)
 
-    await createUserWithEmailAndPassword(auth,email,password)
-    .then((userCredential)=>{
-      setUser(userCredential.user)
+    try{
+      const res=await createUserWithEmailAndPassword(auth,email,password)
+      await setDoc(doc(db,'users',res.user.uid),{
+        email:res.user.email,
+        uid:res.user.uid,
+        username:email.split('@')[0],
+        role:'user',
+        date: Date.now()
+      })
+      setUser(res.user)
       router.push('/dashboard')
       setLoading(false)
-    }).catch((error)=>alert(error.message))
-    .finally(()=>setLoading(false))
+    }
+    catch(error:any){
+      setError(error.message)
+      alert(error.message)
+    } finally{(()=>setLoading(false))}
+
+    
   }
 
   const signIn=async (email:string,password:string)=>{

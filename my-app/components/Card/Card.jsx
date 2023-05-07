@@ -1,18 +1,29 @@
 import { useEffect, useRef, useState } from "react";
+import { doc, setDoc, updateDoc, arrayRemove,arrayUnion,getDocs } from "@firebase/firestore";
+import { db} from "../../utils/Firebase";
 import Web3Modal  from 'web3modal'
 //import web3 from '../../constants/web3';
 import { providers, Contract, ethers } from "ethers";
+import useToggleVote from '../../hooks/useToggleVote'
+import useAuth from "../../hooks/useAuth";
  
 import {VOTE_CONTRACT_ADDRESS,abi} from '../../constants'
 import constants from '../../constants';
 import { useRouter } from 'next/router';
 
-function Card({walletConnected,Name,role,parentCallback,voted}) {
+
+function Card({walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image}) {
   
- //const [voted, setVoted] = useState(0);
+//const [voted, setVoted] = useState(0);
  const [loading, setLoading] = useState(false);
+ const {user,loading:userloading}=useAuth();
  const [owner, setOwner] = useState('');
+ console.log(indx, Name)
+ console.log(user?.email , user?.uid)
  const web3ModalRef = useRef();
+
+ //const isVoted=votes.includes(user?.id)
+ //const {toggleVote,isLoading}=useToggleVote({id,isVoted,uid:user?.id});
 // const [walletConnected, setWalletConnected] = useState(false);
 
 // useEffect(() => {
@@ -76,11 +87,33 @@ console.log(walletConnected);
     }
   }
  const vot=()=>{
-  if(voted===0){
+  //   //voting
+  //   const voteDoc=doc(db,"Elections",id);
+  //   updateDoc(voteDoc,{
+  //     [`Elections.people.${Name}`]: count + 1,
+      
+  //   });
+  const docRef = doc(db, 'Elections', eid, );
+         updateDoc(docRef, {            
+           
+           //update count in people array
+           people: {
+            ...people,
+              [indx]: {
+                ...people[indx],
+                count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),
+
+              }
+            }
+           
+        });
     alert("Successfully Voted for "+Name);
     parentCallback(1);
+
+    console.log(docRef);
+
   }
- }
+ 
   return (
     <div className='flex flex-col shadow-lg max-h-[420px]'>
             <div className='flex flex-col items-center '>

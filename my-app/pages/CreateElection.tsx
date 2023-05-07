@@ -5,12 +5,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
+import {v4 as uuid} from 'uuid';
 import { useRouter } from "next/router";
 import { useContext, useRef, useState } from "react";
 import FormCard from "../components/Card/FormCard";
 import { db } from "../utils/Firebase";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { AppContext, AppContextType } from "./_app";
+import { toast } from 'react-hot-toast';
 
 function create_vote() {
     const [showModalOne, setShowModalOne] = useState(false)
@@ -20,7 +22,7 @@ function create_vote() {
     const [formData,setFormData] = useState(
         {title: '', description: '', orgName: '',
         people:{
-            name: '', email: '', role: ''
+            name: '', email: '', role: '',image: ''
         }, dateValue: ''}
     )
     
@@ -70,25 +72,40 @@ function create_vote() {
        const qdata = querySnapshot.docs.map
        ((doc: { data: () => any; }) => doc.data());
         console.log(qdata)
-        addDoc(collection(db, `Elections/`), {
+        const eId=uuid();
+        setDoc(doc(db, `Elections`, eId), {
             title: formData.title,
             description: formData.description,
             orgName: formData.orgName,
-           people:  cardDetails.map((p)=>{return{
+            id: eId,
+            people: cardDetails.map((p)=>{return{
                 Name:p.Name,
                 Email:p.Email,
-                Role:p.Role
+                Role:p.Role,
+                Image:p.Image,
+                uId:uuid(),
+                count:[]
             }}),
         });
+
+        toast.success('Successfully created election', {
+            style: {
+              border: '1px solid #713200',
+              padding: '16px',
+              color: '#713200',
+            },
+            iconTheme: {
+              primary: '#713200',
+              secondary: '#FFFAEE',
+            },
+          })
         //console.log(formData)
         //console.log("cardDetails", cardDetails)
 
-        const q2=query(collection(db,`Elections`,"candidates"));
+        const q2=query(collection(db,"Candidates"));
         const querySnapshot2=await getDocs(q2);
-        const queryData2=querySnapshot2.docs.map((doc)=>doc.data());
-        console.log(queryData2);
-        
-  
+        const queryData2=querySnapshot2.docs.map((doc)=>doc.data());        
+        console.log(queryData2)
        cardDetails.map((p)=>{
          queryData2.map((q)=>{
             if(p.Email==q.Email){
@@ -100,18 +117,27 @@ function create_vote() {
               return;
             }
      
-          addDoc(collection(db,`Elections/${q.id}`,"candidates"),{
+          addDoc(collection(db,"candidates/"),{
             Name:p.Name,
             Email:p.Email,
-            Role:p.Role
+            Role:p.Role,
+            Image:p.Image,
+            uId:uuid(),
+            count:0
           })
-          console.log(p)
+          
+          
         })
       }) 
         //localStorage.setItem("formData", JSON.stringify(formData))
         
         e.target.reset()
     }
+    const customStyle = {
+        maxWidth: 'none',
+        width: '900px',
+        padding: '20px'
+    };
 
     const handleModalTwoSubmit = (e:any) => {
         e.preventDefault()
@@ -164,14 +190,14 @@ function create_vote() {
                     w-full outline-none' type='text' 
                     name="title"
                     value={formData.title}
-                    onChange={handleChange}  placeholder='TITLE' />
+                    onChange={handleChange}  placeholder='TITLE' required/>
                     <input 
                     className='bg-white rounded-lg p-4  my-3
                     border-[1px] border-[#93278F] 
                     w-full outline-none' type='text'
                     name="description"
                     value={formData.description}
-                    onChange={handleChange} placeholder='DESCRIPTION' />
+                    onChange={handleChange} placeholder='DESCRIPTION' required/>
                     <h2 className='font-bold mb-2'>Name of the Organization</h2>
                     <input 
                     className='bg-white rounded-lg p-2
@@ -179,7 +205,7 @@ function create_vote() {
                     w-full outline-none' type='text'
                     name="orgName"
                     value={formData.orgName}
-                    onChange={handleChange} />
+                    onChange={handleChange} required/>
                 </div>
                 <div className='flex my-10 '>
                     <button type="button"
@@ -205,12 +231,10 @@ function create_vote() {
             </form>
 
 
-            <Dialog open={showModalOne} onClose={()=>setShowModalOne(false)}>
-               <div className="bg-white rounded-lg w-[600px]
-               flex items-center justify-center py-8 m-auto">
+            <Dialog open={showModalOne} 
+                  PaperProps={{style: customStyle}} 
+                    onClose={()=>setShowModalOne(false)}>
                <FormCard />
-               <button onClick={()=>setShowModalOne(false)}>sub</button>
-                </div>
             </Dialog>
 
             <MuiModal 
