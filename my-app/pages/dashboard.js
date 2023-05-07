@@ -170,6 +170,7 @@ function dashboard() {
                   <Card
                     key={person.uId}
                     id={person.uId}
+                    people={doc.people}
                     indx={indx}
                     walletConnected={walletConnected}
                     Name={person.Name}

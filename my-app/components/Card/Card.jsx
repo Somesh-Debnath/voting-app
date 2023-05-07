@@ -12,7 +12,7 @@ import constants from '../../constants';
 import { useRouter } from 'next/router';
 
 
-function Card({walletConnected,Name,role,parentCallback,voted,indx,id,eid,Email,Image}) {
+function Card({walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image}) {
   
 //const [voted, setVoted] = useState(0);
  const [loading, setLoading] = useState(false);
@@ -98,12 +98,9 @@ console.log(walletConnected);
            
            //update count in people array
            people: {
+            ...people,
               [indx]: {
-                Email: Email,
-                Role : role,
-                uid:id,
-                Name : Name,
-                Image:Image,
+                ...people[indx],
                 count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),
 
               }
