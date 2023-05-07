@@ -72,17 +72,19 @@ function create_vote() {
        const qdata = querySnapshot.docs.map
        ((doc: { data: () => any; }) => doc.data());
         console.log(qdata)
-        addDoc(collection(db, `Elections/`), {
+        const eId=uuid();
+        setDoc(doc(db, `Elections`, eId), {
             title: formData.title,
             description: formData.description,
             orgName: formData.orgName,
+            id: eId,
             people: cardDetails.map((p)=>{return{
                 Name:p.Name,
                 Email:p.Email,
                 Role:p.Role,
                 Image:p.Image,
                 uId:uuid(),
-                count:0
+                count:[]
             }}),
         });
 
@@ -115,7 +117,7 @@ function create_vote() {
               return;
             }
      
-          addDoc(collection(db,"Candidates/"),{
+          addDoc(collection(db,"candidates/"),{
             Name:p.Name,
             Email:p.Email,
             Role:p.Role,

@@ -11,6 +11,8 @@ interface Inputs{
 function login() {
   const [login,setLogin]=useState(false)
   const {signIn,signUp} = useAuth()
+  const {user,loading}=useAuth();
+  console.log(user);
   const { register,
      handleSubmit,
       watch,

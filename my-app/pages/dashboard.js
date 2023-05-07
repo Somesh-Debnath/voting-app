@@ -18,39 +18,31 @@ function dashboard() {
   const router = useRouter();
   const { logout } = useAuth();
   const [walletConnected, setWalletConnected] = useState(0);
-  const [users,setUsers]=useState([]);
   
   //const query=collection(db,'Elections','Elections');
-  const candidateQuery=collection(db,'Elections');
-  const [docs,loading,error]=useCollectionData(candidateQuery);
+  const electionQuery=collection(db,'Elections');
+  const [docs,loading,error]=useCollectionData(electionQuery);
 
   const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
   const [cardDetails, setCardDetails] = useState([]);
   const [elections,setElections]=useState([]);
-  const FormData = JSON.parse(localStorage.getItem("formData"));
-  //const Candidates = JSON.parse(localStorage.getItem("people"));
- // console.log(Candidates);
 
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
   
     
   useEffect(()=>{
-    // const getElections=async()=>{
-    //   const getElections=await getDocs(query);
-    //   const elections=getElections.docs.map((doc)=>doc.data());
-    //   setElections(elections);
-    // }
-    const getCandidates=async()=>{
-      const getCandidates=await getDocs(candidateQuery);
-      const candidates=getCandidates.docs.map((doc)=>doc.data());
-      setUsers(candidates);
+   
+    const getElections=async()=>{
+      const getElections=await getDocs(electionQuery);
+      const elections=getElections.docs.map((doc)=>doc.data());
+      setElections(elections);
     }
-    getCandidates();
+    getElections();
     //getElections();
-    console.log(users);
+    
     renderButton();
   },[])
   
@@ -166,7 +158,7 @@ function dashboard() {
         
         
           {loading && "Loading..."}
-          {users && users.map((doc) => (
+          {elections && elections.map((doc) => (
             <div>
               <div className="flex mt-5 mx-[11px]">
               <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
@@ -177,13 +169,18 @@ function dashboard() {
                 {doc.people.map((person,indx) => (
                   <Card
                     key={person.uId}
+                    id={person.uId}
                     indx={indx}
                     walletConnected={walletConnected}
                     Name={person.Name}
                     role={person.Role}
+                    Email={person.Email}
+                    Image={person.Image}
                     parentCallback={handleCallback}
                     voted={voted}
+                    eid={doc.id}
                   />
+                  
                 ))}
             </div>
             </div>
