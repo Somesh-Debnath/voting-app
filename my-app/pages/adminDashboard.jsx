@@ -76,11 +76,11 @@ function adminDashboard()
               <span className="font-semibold px-2">{doc.title}</span>
               </div>
               <div className="flex flex-row justify-around mt-4">
-                {doc.people.map((person) => (
+                {Object.keys(doc.people).map((key) => (
                   <Card
-                    key={person.uId}
-                    Name={person.Name}
-                    role={person.Role}                   
+                    key={doc.people[key].uId}
+                    Name={doc.people[key].Name}
+                    role={doc.people[key].Role}                   
                   />
                 ))}
                  </div>
