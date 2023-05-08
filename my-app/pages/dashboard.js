@@ -166,17 +166,18 @@ function dashboard() {
               </div>
               
               <div className="flex flex-row justify-around mt-4">
-                {doc.people.map((person,indx) => (
+                {/* Object.keys(people).map((key) => people[key].name) */}
+                {Object.keys(doc.people).map((key) => (
                   <Card
-                    key={person.uId}
-                    id={person.uId}
-                    people={doc.people}
-                    indx={indx}
+                    key={doc.people[key].uId}
+                    id={doc.people[key].uId}
+                    people={doc.people[key]}
+                    indx={key}
                     walletConnected={walletConnected}
-                    Name={person.Name}
-                    role={person.Role}
-                    Email={person.Email}
-                    Image={person.Image}
+                    Name={doc.people[key].Name}
+                    role={doc.people[key].Role}
+                    Email={doc.people[key].Email}
+                    Image={doc.people[key].Image}
                     parentCallback={handleCallback}
                     voted={voted}
                     eid={doc.id}
