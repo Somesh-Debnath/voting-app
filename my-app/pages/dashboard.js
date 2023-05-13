@@ -1,5 +1,5 @@
 import { providers } from "ethers";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, getFirestore, onSnapshot, query, setDoc } from 'firebase/firestore'
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
@@ -8,6 +8,7 @@ import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar/Sidebar';
 import { db } from "../utils/Firebase";
+
 
 /*
  * This function returns the first linked account found.
@@ -21,7 +22,9 @@ function dashboard() {
   
   //const query=collection(db,'Elections','Elections');
   const electionQuery=collection(db,'Elections');
+  //const CandidatesQuery=collection(db,'Elections','Candidates')  
   const [docs,loading,error]=useCollectionData(electionQuery);
+  //const [docs1,loading1,error1]=useCollectionData(CandidatesQuery);
 
   const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
@@ -37,16 +40,26 @@ function dashboard() {
    
     const getElections=async()=>{
       const getElections=await getDocs(electionQuery);
-      const elections=getElections.docs.map((doc)=>doc.data());
+      const elections = getElections.docs.map((doc)=>({
+        ...doc.data(), id:doc.id
+    }))
       setElections(elections);
+      elections.map(async (election)=>{
+        const getCandidates=await getDocs(collection(db,'Elections',election.id,'Candidates'));
+        const candidates = getCandidates.docs.map((doc)=>({
+          ...doc.data(), id:doc.id
+      }))
+      setCardDetails(candidates);
+    })
+      
     }
     getElections();
-    //getElections();
+
     
     renderButton();
   },[])
-  
-  console.log(docs);
+
+  console.log(elections);
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -167,20 +180,31 @@ function dashboard() {
               
               <div className="flex flex-row justify-around mt-4">
                 {/* Object.keys(people).map((key) => people[key].name) */}
-                {Object.keys(doc.people).map((key) => (
+                {cardDetails.map((can) => (
                   <Card
-                    key={doc.people[key].uId}
-                    id={doc.people[key].uId}
-                    people={doc.people[key]}
-                    indx={key}
-                    walletConnected={walletConnected}
-                    Name={doc.people[key].Name}
-                    role={doc.people[key].Role}
-                    Email={doc.people[key].Email}
-                    Image={doc.people[key].Image}
+                    // key={doc.people[key].uId}
+                    // id={doc.people[key].uId}
+                    // people={doc.people[key]}
+                    // indx={key}
+                    // walletConnected={walletConnected}
+                    // Name={doc.people[key].Name}
+                    // role={doc.people[key].Role}
+                    // Email={doc.people[key].Email}
+                    // Image={doc.people[key].Image}
+                    // parentCallback={handleCallback}
+                    // voted={voted}
+                    // eid={doc.id}
+                    key={can.uId}
+                    Name={can.Name}
+                    role={can.Role}
+                    id={can.uId}
+                    Email={can.Email}
+                    Image={can.Image}
                     parentCallback={handleCallback}
                     voted={voted}
                     eid={doc.id}
+                    indx={can.id}
+                    walletConnected={walletConnected}
                   />
                   
                 ))}

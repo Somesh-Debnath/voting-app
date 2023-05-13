@@ -87,6 +87,16 @@ function create_vote() {
                 count:[]
             }}),
         });
+        cardDetails.map((p)=>{
+            setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
+                Name:p.Name,
+                Email:p.Email,
+                    Role:p.Role,
+                    Image:p.Image,
+                    uId:uuid(),
+                    count:[]
+            });
+        })
 
         toast.success('Successfully created election', {
             style: {

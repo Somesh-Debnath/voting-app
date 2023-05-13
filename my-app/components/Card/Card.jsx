@@ -93,19 +93,9 @@ console.log(walletConnected);
   //     [`Elections.people.${Name}`]: count + 1,
       
   //   });
-  const docRef = doc(db, 'Elections', eid, );
+  const docRef = doc(db, "Elections", eid, "Candidates", indx); 
          updateDoc(docRef, {            
-           
-           //update count in people array
-           people: {
-            ...people,
-              [indx]: {
-                ...people[indx],
-                count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),
-
-              }
-            }
-           
+            count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),     
         });
     alert("Successfully Voted for "+Name);
     parentCallback(1);
