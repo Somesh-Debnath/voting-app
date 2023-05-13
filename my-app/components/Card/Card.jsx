@@ -20,6 +20,7 @@ function Card({walletConnected,people,Name,role,parentCallback,voted,indx,id,eid
  const [owner, setOwner] = useState('');
  console.log(indx, Name)
  console.log(user?.email , user?.uid)
+ console.log(people, "here")
  const web3ModalRef = useRef();
 
  //const isVoted=votes.includes(user?.id)
@@ -31,11 +32,13 @@ function Card({walletConnected,people,Name,role,parentCallback,voted,indx,id,eid
 //   web3.eth.requestAccounts().then(console.log);
 //   setOwner(owner);
 // }, []);
-console.log(owner);
+// console.log(owner);
+console.log(people , "here");
  const router = useRouter();
 //console.log(FormData.name)
 
 const getProviderOrSigner = async (needSigner = false) => {
+
   // Connect to Metamask
   // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
   const provider = await web3ModalRef.current.connect();
@@ -93,20 +96,13 @@ console.log(walletConnected);
   //     [`Elections.people.${Name}`]: count + 1,
       
   //   });
-  const docRef = doc(db, 'Elections', eid, );
-         updateDoc(docRef, {            
-           
-           //update count in people array
-           people: {
-            ...people,
-              [indx]: {
-                ...people[indx],
-                count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),
+  console.log(people, "here")
+  
+    const docRef = doc(db, "Elections", eid, "Candidates", indx); 
+    updateDoc(docRef, {            
+      count: voted && people.includes(user?.uid)? arrayRemove(user?.uid) : arrayUnion(user?.uid),     
+    });
 
-              }
-            }
-           
-        });
     alert("Successfully Voted for "+Name);
     parentCallback(1);
 

@@ -37,12 +37,12 @@ const candidates = [
           
           <div className="flex fixed space-x-1 top-5 z-50 right-8">
             <h3>avatar</h3>
-            <h3>name</h3>
+            <h3>--name</h3>
           </div>
         </div>
 
-        <Card variant="outlined">
-      <CardContent>
+    <Card variant="outlined">
+      <CardContent className='mt-[7%]'>
         <Typography variant="h5" component="h2" gutterBottom>
           Election Stats
         </Typography>
