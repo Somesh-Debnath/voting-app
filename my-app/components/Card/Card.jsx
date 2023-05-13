@@ -86,16 +86,14 @@ console.log(walletConnected);
         return <button className={`bg-[#93278F] text-white px-8 py-2
         hover:bg-[#5c0f59] ${voted ? "opacity-50 cursor-not-allowed" : ""}
         text-sm rounded-2xl`}
-        onClick={vot}>Vote</button>   
+        onClick={vot} disabled={voted ? true : false}>
+          Vote
+        </button>   
     }
   }
+
+  // const countPeople = people.length
  const vot=()=>{
-  //   //voting
-  //   const voteDoc=doc(db,"Elections",id);
-  //   updateDoc(voteDoc,{
-  //     [`Elections.people.${Name}`]: count + 1,
-      
-  //   });
   console.log(people, "here")
   
     const docRef = doc(db, "Elections", eid, "Candidates", indx); 
@@ -104,6 +102,7 @@ console.log(walletConnected);
     });
 
     alert("Successfully Voted for "+Name);
+
     parentCallback(1);
 
     console.log(docRef);
