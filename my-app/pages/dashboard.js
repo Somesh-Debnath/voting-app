@@ -169,7 +169,7 @@ function dashboard() {
             placeholder="Search"
           />
           {renderButton()}
-          <div className="flex fixed space-x-1 top-4 z-50 right-8">
+          <div className="flex fixed space-x-1 top-4 z-50 right-12">
             <Avatar
               name={userName}
               size="40"
