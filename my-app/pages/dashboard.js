@@ -8,6 +8,8 @@ import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar/Sidebar';
 import { db } from "../utils/Firebase";
+import {auth} from "../utils/Firebase"
+import Avatar from 'react-avatar';
 
 /*
  * This function returns the first linked account found.
@@ -26,8 +28,25 @@ function dashboard() {
   const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
+  const [userName, setUserName] = useState("")
   const [cardDetails, setCardDetails] = useState([]);
   const [elections,setElections]=useState([]);
+
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUserName(user.email.charAt(0) || '');
+      } else {
+        setUserName('');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  console.log(userName, "-->")
+  
 
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
@@ -150,9 +169,13 @@ function dashboard() {
             placeholder="Search"
           />
           {renderButton()}
-          <div className="flex fixed space-x-1 top-5 z-50 right-8">
-            <h3>avatar</h3>
-            <h3>name</h3>
+          <div className="flex fixed space-x-1 top-4 z-50 right-8">
+            <Avatar
+              name={userName}
+              size="40"
+              round={true}
+              style={{ fontSize: '50px' }}
+            />
           </div>
         </div>
         <div className="flex flex-col mt-20 px-4">

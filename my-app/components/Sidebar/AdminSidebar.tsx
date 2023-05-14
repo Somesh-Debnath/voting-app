@@ -2,7 +2,7 @@ import router, { useRouter } from 'next/router'
 import React from 'react'
 import useAuth from '../../hooks/useAuth'
 
-function Sidebar() {
+function AdminSidebar() {
     const {logout}=useAuth()
     const router=useRouter()
   return (
@@ -15,11 +15,15 @@ function Sidebar() {
             <ul>
                 <li className="sidebar__menu--item">
                 <button
-                   onClick={()=>router.push("/dashboard")}>Dashboard</button>
+                   onClick={()=>router.push("/adminDashboard")}>Dashboard</button>
                 </li>
                 <li className="sidebar__menu--item">
                 <button
                    onClick={()=>router.push("/ElectionStats")}>Election Stats</button>
+                </li>
+                <li className="sidebar__menu--item">
+                   <button
+                   onClick={()=>router.push("/CreateElection")}>Create Election</button>
                 </li>
                 
                 <button className='mt-48 font-medium' onClick={logout} >Logout</button>
@@ -29,4 +33,4 @@ function Sidebar() {
   )
 }
 
-export default Sidebar
+export default AdminSidebar
