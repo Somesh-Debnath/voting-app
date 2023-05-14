@@ -99,7 +99,7 @@ function ElectionStats() {
 
     <Card variant="outlined" sx={{overflow: "auto"}}>
       <CardContent className='mt-[7%]' sx={{ml: "20px"}}>
-        <Typography variant="h3" component="h2" sx={{ color:"#93278F", fontWeight: "bold", mb:"20px", mt:"20px"}} gutterBottom>
+        <Typography variant="h3" component="h2" sx={{ color:"#93278F", fontWeight: "bold", mb:"20px"}} gutterBottom>
           Election Stats
         </Typography>
         <Divider />
