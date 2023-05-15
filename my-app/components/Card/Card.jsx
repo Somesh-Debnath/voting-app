@@ -84,7 +84,7 @@ web3ModalRef.current = new Web3Modal({
       getUsers();
     },[])
 
-    console.log(user.uid)
+    console.log(user)
 
   const renderButton = () => {
     if(walletConnected){

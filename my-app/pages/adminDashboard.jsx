@@ -8,7 +8,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 
 import useAuth from "../hooks/useAuth";
 import { db } from "../utils/Firebase";
-import Sidebar from '../components/Sidebar/Sidebar';
+import AdminSidebar from '../components/Sidebar/AdminSidebar';
 
 
 function adminDashboard()
@@ -44,7 +44,7 @@ function adminDashboard()
   return (
     <div className='flex w-screen m-0  h-screen'>
            
-      <Sidebar/>
+      <AdminSidebar/>
        <div className='flex flex-col w-screen ml-[183px]'>
           <div className='px-8 py-4 shadow-lg max-h-[80px] fixed 
           top-0 z-50  w-full flex  bg-opacity-100'>

@@ -8,6 +8,8 @@ import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar/Sidebar';
 import { db } from "../utils/Firebase";
+import {auth} from "../utils/Firebase"
+import Avatar from 'react-avatar';
 
 function dashboard() {
   const userQuery=collection(db,'users');
@@ -19,15 +21,28 @@ function dashboard() {
   const [Voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
+  const [userName, setUserName] = useState("")
   const [cardDetails, setCardDetails] = useState([]);
   const [elections,setElections]=useState([]);
 
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged(user => {
+        if (user) {
+          setUserName(user.email.charAt(0) || '');
+        } else {
+          setUserName('');
+        }
+      });
   
+      return () => unsubscribe();
+    }, []);
+  
+    console.log(userName, "-->")
     
   useEffect(()=>{
-   
+    
     const getElections=async()=>{
       const getElections=await getDocs(electionQuery);
       const elections = getElections.docs.map((doc)=>({
@@ -60,12 +75,12 @@ function dashboard() {
     if(user1?.uid === user?.uid){
       console.log(user1.username + " " + user1.uid);
     }
-    elections.map((election)=>{
-      if(user1?.voted?.includes(election.id)){
-        alert("You have already voted for this election");
-        setVoted(1);
-      }
-    })
+    // elections.map((election)=>{
+    //   if(user1?.voted?.includes(election.id)){
+    //     alert("You have already voted for this election");
+    //     setVoted(1);
+    //   }
+    // })
   })
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
@@ -162,8 +177,12 @@ function dashboard() {
           />
           {renderButton()}
           <div className="flex fixed space-x-1 top-5 z-50 right-8">
-            <h3>avatar</h3>
-            <h3>name</h3>
+          <Avatar
+              name={userName}
+              size="40"
+              round={true}
+              style={{ fontSize: '50px' }}
+            />
           </div>
         </div>
         <div className="flex flex-col mt-20 px-4">
