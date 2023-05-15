@@ -31,7 +31,6 @@ function create_vote() {
     )
     const router=useRouter()
 
-
     function handleChange(event:any) {
         setFormData((prevFormData:any) => {
             return {
@@ -139,8 +138,6 @@ function create_vote() {
           
         })
       }) 
-        //localStorage.setItem("formData", JSON.stringify(formData))
-        
         e.target.reset()
     }
     const customStyle = {

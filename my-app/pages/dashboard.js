@@ -9,24 +9,14 @@ import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar/Sidebar';
 import { db } from "../utils/Firebase";
 
-
-/*
- * This function returns the first linked account found.
- * If there is no account linked, it will return null.
- */
-
 function dashboard() {
-  const router = useRouter();
-  const { logout } = useAuth();
+  const userQuery=collection(db,'users');
+  const {user}=useAuth();
+  const [users,setUsers]=useState([]);
   const [walletConnected, setWalletConnected] = useState(0);
-  
-  //const query=collection(db,'Elections','Elections');
   const electionQuery=collection(db,'Elections');
-  //const CandidatesQuery=collection(db,'Elections','Candidates')  
   const [docs,loading,error]=useCollectionData(electionQuery);
-  //const [docs1,loading1,error1]=useCollectionData(CandidatesQuery);
-
-  const [voted, setVoted] = useState(0);
+  const [Voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
   const [cardDetails, setCardDetails] = useState([]);
@@ -51,7 +41,14 @@ function dashboard() {
       }))
       setCardDetails(candidates);
     })
-      
+    const getUsers=async()=>{
+      const getUsers=await getDocs(userQuery);
+      const users = getUsers.docs.map((doc)=>({
+        ...doc.data(), id:doc.id
+    }))
+      setUsers(users);        
+    }
+    getUsers();
     }
     getElections();
 
@@ -59,7 +56,17 @@ function dashboard() {
     renderButton();
   },[])
 
-  console.log(elections);
+  users.map((user1)=>{
+    if(user1?.uid === user?.uid){
+      console.log(user1.username + " " + user1.uid);
+    }
+    elections.map((election)=>{
+      if(user1?.voted?.includes(election.id)){
+        alert("You have already voted for this election");
+        setVoted(1);
+      }
+    })
+  })
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -134,7 +141,7 @@ function dashboard() {
 
   const handleCallback = (childData) => {
     setVoted(childData);
-    setVoted(1);
+    //setVoted(1);
   };
 
   return (
@@ -201,7 +208,7 @@ function dashboard() {
                     Email={can.Email}
                     Image={can.Image}
                     parentCallback={handleCallback}
-                    voted={voted}
+                    voted={Voted}
                     eid={doc.id}
                     indx={can.id}
                     walletConnected={walletConnected}
