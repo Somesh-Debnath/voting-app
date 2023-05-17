@@ -15,6 +15,21 @@ import Box from '@mui/material/Box';
 import { db } from '../utils/Firebase';
 import { Divider } from '@mui/material';
 
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+import {Doughnut} from 'react-chartjs-2'
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend
+);
+
 function ElectionStats() {
 
   const [open, setOpen] = useState(false);
@@ -29,8 +44,6 @@ function ElectionStats() {
     })
   };
   const handleClose = () => setOpen(false);
-  const [cardDetails, setCardDetails] = useState([]);
-  const [elections,setElections]=useState([]);
 
   //Modal styles
   const style = {
@@ -47,6 +60,10 @@ function ElectionStats() {
   };
 
   //fetch candidate details
+
+  const [cardDetails, setCardDetails] = useState([]);
+  const [elections,setElections]=useState([]);
+
   const electionQuery=collection(db,'Elections');
   useEffect(()=>{
    
@@ -73,19 +90,46 @@ function ElectionStats() {
   }));
 
   const votesArray = candidates.map((candidate) => candidate.votes);
+  const candidateArray = candidates.map((candidate) => candidate.name);
   const maxVotes = Math.max(...votesArray);
   console.log(maxVotes)
 
   // Calculate total votes
   const totalVotes = candidates.reduce((acc, curr) => acc + curr.votes, 0);
 
+  //chartjs
+
+  const getRandomVioletColor = () => {
+    const minHue = 260; // Minimum hue for violet
+    const maxHue = 300; // Maximum hue for violet
+    const saturation = Math.floor(Math.random() * 51) + 50; // Random saturation value between 50 and 100
+    const lightness = Math.floor(Math.random() * 21) + 40; // Random lightness value between 40 and 60
+    const hue = Math.floor(Math.random() * (maxHue - minHue + 1)) + minHue; // Random hue value within the violet range
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  };
+  
+  const data = {
+    labels: candidateArray,
+    datasets: [{
+      label: 'Votes',
+      data: votesArray,
+      backgroundColor: candidateArray.map(() => getRandomVioletColor()),
+      borderColor: ['#93278F']
+    }]
+    
+  }
+
+  const options = {
+    responsive: true
+  }
+
   return (
     <div className="flex w-screen m-0  h-screen">
       <Sidebar />
-      <div className="flex flex-col w-screen ml-[183px]">
+      <div className="flex flex-col w-screen ml-[183px] z-50">
         <div
           className="px-8 py-4 shadow-lg max-h-[80px] fixed 
-          top-0 z-50  w-full flex  bg-opacity-100"
+          top-0 z-40  w-full flex  bg-opacity-100"
         >
           <input
             className="w-[40rem] px-6
@@ -99,14 +143,14 @@ function ElectionStats() {
 
     <Card variant="outlined" sx={{overflow: "auto"}}>
       <CardContent className='mt-[7%]' sx={{ml: "20px"}}>
-        <Typography variant="h3" component="h2" sx={{ color:"#93278F", fontWeight: "bold", mb:"20px"}} gutterBottom>
+        <Typography variant="h3" component="h2" align = "center" sx={{ color:"#93278F", fontWeight: "bold", mb:"20px"}} gutterBottom>
           Election Stats
         </Typography>
         <Divider />
-        <Typography variant="h4" component="h2" sx={{ color:"#93278F", fontWeight: "bold", mb:"40px", mt:"20px"}} gutterBottom>
+        <Typography variant="h5" component="h2" align = "center" sx={{ color:"#93278F", fontWeight: "bold", mb:"40px", mt:"20px"}} gutterBottom>
           {elections[0]?.title}
         </Typography>
-        <Grid container spacing={3}>
+        {/* <Grid container spacing={3}>
           {candidates.map((candidate) => (
             <Grid item xs={12} key={candidate.name}>
               <Typography variant="h6" component="p" sx={{color: "#2F0745", fontWeight: "bold"}}>
@@ -120,7 +164,16 @@ function ElectionStats() {
               </LinearProgress>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
+      <div style={{width: "40%", height: "40%", margin: "0 auto"}}>
+        <Doughnut
+          data={data}
+          options={options}
+        >
+
+        </Doughnut>
+      </div>
+
       </CardContent>
       
       <Box textAlign="center">
