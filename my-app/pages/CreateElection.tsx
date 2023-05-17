@@ -31,7 +31,6 @@ function create_vote() {
     )
     const router=useRouter()
 
-
     function handleChange(event:any) {
         setFormData((prevFormData:any) => {
             return {
@@ -87,6 +86,16 @@ function create_vote() {
                 count:[]
             }}),
         });
+        cardDetails.map((p)=>{
+            setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
+                Name:p.Name,
+                Email:p.Email,
+                    Role:p.Role,
+                    Image:p.Image,
+                    uId:uuid(),
+                    count:[]
+            });
+        })
 
         cardDetails.map((p)=>{
             setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
@@ -140,8 +149,6 @@ function create_vote() {
           
         })
       }) 
-        //localStorage.setItem("formData", JSON.stringify(formData))
-        
         e.target.reset()
     }
     const customStyle = {

@@ -67,7 +67,8 @@ export const AuthProvider=({children}:AuthProviderProps)=> {
         uid:res.user.uid,
         username:email.split('@')[0],
         role:'user',
-        date: Date.now()
+        date: Date.now(),
+        voted:[]
       })
       setUser(res.user)
       router.push('/dashboard')

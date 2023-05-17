@@ -11,21 +11,14 @@ import { db } from "../utils/Firebase";
 import {auth} from "../utils/Firebase"
 import Avatar from 'react-avatar';
 
-/*
- * This function returns the first linked account found.
- * If there is no account linked, it will return null.
- */
-
 function dashboard() {
-  const router = useRouter();
-  const { logout } = useAuth();
+  const userQuery=collection(db,'users');
+  const {user}=useAuth();
+  const [users,setUsers]=useState([]);
   const [walletConnected, setWalletConnected] = useState(0);
-  
-  //const query=collection(db,'Elections','Elections');
   const electionQuery=collection(db,'Elections');
   const [docs,loading,error]=useCollectionData(electionQuery);
-
-  const [voted, setVoted] = useState(0);
+  const [Voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
   const [userName, setUserName] = useState("")
@@ -50,10 +43,22 @@ function dashboard() {
 
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged(user => {
+        if (user) {
+          setUserName(user.email.charAt(0) || '');
+        } else {
+          setUserName('');
+        }
+      });
   
+      return () => unsubscribe();
+    }, []);
+  
+    console.log(userName, "-->")
     
   useEffect(()=>{
-   
+    
     const getElections=async()=>{
       const getElections=await getDocs(electionQuery);
       const elections = getElections.docs.map((doc)=>({
@@ -67,14 +72,32 @@ function dashboard() {
       }))
       setCardDetails(candidates);
     })
+    const getUsers=async()=>{
+      const getUsers=await getDocs(userQuery);
+      const users = getUsers.docs.map((doc)=>({
+        ...doc.data(), id:doc.id
+    }))
+      setUsers(users);        
+    }
+    getUsers();
     }
     getElections();
-    //getElections();
+
     
     renderButton();
   },[])
-  
-  console.log(elections);
+
+  users.map((user1)=>{
+    if(user1?.uid === user?.uid){
+      console.log(user1.username + " " + user1.uid);
+    }
+    // elections.map((election)=>{
+    //   if(user1?.voted?.includes(election.id)){
+    //     alert("You have already voted for this election");
+    //     setVoted(1);
+    //   }
+    // })
+  })
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -149,7 +172,7 @@ function dashboard() {
 
   const handleCallback = (childData) => {
     setVoted(childData);
-    setVoted(1);
+    //setVoted(1);
   };
 
   return (
@@ -169,8 +192,8 @@ function dashboard() {
             placeholder="Search"
           />
           {renderButton()}
-          <div className="flex fixed space-x-1 top-4 z-50 right-12">
-            <Avatar
+          <div className="flex fixed space-x-1 top-5 z-50 right-8">
+          <Avatar
               name={userName}
               size="40"
               round={true}
@@ -198,18 +221,29 @@ function dashboard() {
               </div>
               
               <div className="flex flex-row justify-around mt-4">
-                {/* {console.log(Object.keys(doc.people).map((key) => doc.people[key]))} */}
+                {/* Object.keys(people).map((key) => people[key].name) */}
                 {cardDetails.map((can) => (
                   <Card
+                    // key={doc.people[key].uId}
+                    // id={doc.people[key].uId}
+                    // people={doc.people[key]}
+                    // indx={key}
+                    // walletConnected={walletConnected}
+                    // Name={doc.people[key].Name}
+                    // role={doc.people[key].Role}
+                    // Email={doc.people[key].Email}
+                    // Image={doc.people[key].Image}
+                    // parentCallback={handleCallback}
+                    // voted={voted}
+                    // eid={doc.id}
                     key={can.uId}
                     Name={can.Name}
-                    people = {can.count}
                     role={can.Role}
                     id={can.uId}
                     Email={can.Email}
                     Image={can.Image}
                     parentCallback={handleCallback}
-                    voted={voted}
+                    voted={Voted}
                     eid={doc.id}
                     indx={can.id}
                     walletConnected={walletConnected}

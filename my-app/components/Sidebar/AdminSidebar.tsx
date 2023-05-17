@@ -25,7 +25,7 @@ function AdminSidebar() {
                    <button
                    onClick={()=>router.push("/CreateElection")}>Create Election</button>
                 </li>
-                
+
                 <button className='mt-48 font-medium' onClick={logout} >Logout</button>
             </ul>
           </div>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { doc, setDoc, updateDoc, arrayRemove,arrayUnion,getDocs } from "@firebase/firestore";
+import { doc, setDoc, updateDoc, arrayRemove,arrayUnion,getDocs,collection,query } from "@firebase/firestore";
 import { db} from "../../utils/Firebase";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 import Web3Modal  from 'web3modal'
 //import web3 from '../../constants/web3';
 import { providers, Contract, ethers } from "ethers";
@@ -12,28 +13,20 @@ import constants from '../../constants';
 import { useRouter } from 'next/router';
 
 
-function Card({walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image}) {
+
+function Card({walletConnected,people,Name,role,voted,parentCallback,indx,id,eid,Email,Image}) {
   
 //const [voted, setVoted] = useState(0);
- const [loading, setLoading] = useState(false);
- const {user,loading:userloading}=useAuth();
+ 
+ //const {user,loading:userloading}=useAuth();
+ const [user, setUsers] = useState(null);
  const [owner, setOwner] = useState('');
+ const userQuery=collection(db,'users');
+  const [docs,loading,error]=useCollectionData(userQuery);
  console.log(indx, Name)
- console.log(user?.email , user?.uid)
- console.log(people, "here")
  const web3ModalRef = useRef();
 
- //const isVoted=votes.includes(user?.id)
- //const {toggleVote,isLoading}=useToggleVote({id,isVoted,uid:user?.id});
-// const [walletConnected, setWalletConnected] = useState(false);
-
-// useEffect(() => {
-//   const owner=constants.methods.admin().call();
-//   web3.eth.requestAccounts().then(console.log);
-//   setOwner(owner);
-// }, []);
-// console.log(owner);
-console.log(people , "here");
+console.log(owner);
  const router = useRouter();
 //console.log(FormData.name)
 
@@ -80,7 +73,20 @@ web3ModalRef.current = new Web3Modal({
       setLoading(false);
     };
 
-console.log(walletConnected);
+    useEffect(()=>{
+   
+      const getUsers=async()=>{
+        const getUsers=await getDocs(userQuery);
+        const users = getUsers.docs.map((doc)=>({
+          ...doc.data(), id:doc.id
+      }))
+        setUsers(users);        
+      }
+      getUsers();
+    },[])
+
+    console.log(user)
+
   const renderButton = () => {
     if(walletConnected){
         return <button className={`bg-[#93278F] text-white px-8 py-2
@@ -91,23 +97,34 @@ console.log(walletConnected);
         </button>   
     }
   }
-
-  // const countPeople = people.length
  const vot=()=>{
-  console.log(people, "here")
-  
-    const docRef = doc(db, "Elections", eid, "Candidates", indx); 
-    updateDoc(docRef, {            
-      count: voted && people.includes(user?.uid)? arrayRemove(user?.uid) : arrayUnion(user?.uid),     
+  const docRef = doc(db, "Elections", eid, "Candidates", indx); 
+         updateDoc(docRef, {            
+            count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),     
+        });
+
+    const docRef2 = doc(db, "users", user?.uid);
+    updateDoc(docRef2, {
+      voted: voted ? arrayRemove(eid) : arrayUnion(eid),
     });
 
-    alert("Successfully Voted for "+Name);
+    console.log(user?.voted?.includes(eid));
 
-    parentCallback(1);
-
-    console.log(docRef);
-
-  }
+    const candidateToWatch = user?.uid
+    docRef2.where('votes', 'array-contains', candidateToWatch).onSnapshot((snapshot) => {
+      const candidates = snapshot.docs.map((doc) => console.log(doc.data(),"-->"));
+    })
+    
+    if(user?.voted?.includes(eid)){
+      alert("You have already voted for this election");
+      console.log(user?.voted?.includes(eid));
+    }
+    else{
+      parentCallback(1);
+      console.log(user?.voted?.includes(eid));
+      alert("Your vote has been recorded");
+    }
+}
  
   return (
     <div className='flex flex-col shadow-lg max-h-[420px]'>
