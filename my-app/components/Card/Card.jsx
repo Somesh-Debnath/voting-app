@@ -31,6 +31,7 @@ console.log(owner);
 //console.log(FormData.name)
 
 const getProviderOrSigner = async (needSigner = false) => {
+
   // Connect to Metamask
   // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
   const provider = await web3ModalRef.current.connect();
@@ -91,7 +92,9 @@ web3ModalRef.current = new Web3Modal({
         return <button className={`bg-[#93278F] text-white px-8 py-2
         hover:bg-[#5c0f59] ${voted ? "opacity-50 cursor-not-allowed" : ""}
         text-sm rounded-2xl`}
-        onClick={vot}>Vote</button>   
+        onClick={vot} disabled={voted ? true : false}>
+          Vote
+        </button>   
     }
   }
  const vot=()=>{

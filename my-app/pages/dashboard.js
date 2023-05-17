@@ -25,6 +25,22 @@ function dashboard() {
   const [cardDetails, setCardDetails] = useState([]);
   const [elections,setElections]=useState([]);
 
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUserName(user.email.charAt(0) || '');
+      } else {
+        setUserName('');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  console.log(userName, "-->")
+  
+
   const getEthereumObject = () =>
     window.ethereum || window.web3?.currentProvider;
     useEffect(() => {

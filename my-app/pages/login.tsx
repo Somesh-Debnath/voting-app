@@ -83,7 +83,7 @@ const router=useRouter()
                 </div>
             
             <div className='flex flex-col mt-5'>
-
+            {/* admin sign in */}
             <button type='button' onClick={()=>{ 
             router.push('./adminDashboard')}}
              className=' font-medium text-center'>

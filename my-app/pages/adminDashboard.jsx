@@ -46,6 +46,7 @@ function adminDashboard()
            
       <AdminSidebar/>
        <div className='flex flex-col w-screen ml-[183px]'>
+        {/* put in a single component topbar */}
           <div className='px-8 py-4 shadow-lg max-h-[80px] fixed 
           top-0 z-50  w-full flex  bg-opacity-100'>
             <input className='w-[40rem] px-6
