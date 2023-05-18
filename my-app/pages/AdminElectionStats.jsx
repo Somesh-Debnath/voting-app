@@ -15,6 +15,8 @@ import Fade from '@mui/material/Fade';
 import Box from '@mui/material/Box';
 import { db } from '../utils/Firebase';
 import { Divider } from '@mui/material';
+import Avatar from 'react-avatar';
+
 
 import {
   Chart as ChartJS,
@@ -54,7 +56,7 @@ function ElectionStats() {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '1px solid #2F0745',
     borderRadius: "10px",
     boxShadow: 24,
     p: 4,
@@ -126,7 +128,7 @@ function ElectionStats() {
 
   return (
     <div className="flex w-screen m-0  h-screen">
-      <Sidebar/>
+      <AdminSidebar />
       <div className="flex flex-col w-screen ml-[183px] z-50">
         <div
           className="px-8 py-4 shadow-lg max-h-[80px] fixed 
@@ -141,9 +143,16 @@ function ElectionStats() {
             placeholder="Search"
           />
         </div>
-        
+        <div className="flex fixed space-x-1 top-5 z-50 right-8">
+          <Avatar
+              name="A D M I N"
+              size="40"
+              round={true}
+              style={{ fontSize: '50px' }}
+            />
+          </div>
 
-        <Card variant="outlined" sx={{overflow: "auto"}}>
+    <Card variant="outlined" sx={{overflow: "auto"}}>
       <CardContent className='mt-[7%]' sx={{ml: "20px"}}>
         <Typography variant="h4" component="h2" align = "center" sx={{ color:"#93278F", fontWeight: "bold"}} gutterBottom>
           Election Stats

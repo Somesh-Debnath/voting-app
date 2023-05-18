@@ -9,6 +9,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import useAuth from "../hooks/useAuth";
 import { db } from "../utils/Firebase";
 import AdminSidebar from '../components/Sidebar/AdminSidebar';
+import Avatar from 'react-avatar';
 
 
 function adminDashboard()
@@ -54,10 +55,14 @@ function adminDashboard()
             type="search" name="search" 
             id="search" placeholder='Search' />
 
-            <div className='flex fixed space-x-1 top-5 z-50 right-8'>
-                    <h3>avatar</h3>
-                    <h3>name</h3>
-            </div>
+        <div className="flex fixed space-x-1 top-5 z-50 right-8">
+          <Avatar
+              name="A D M I N"
+              size="40"
+              round={true}
+              style={{ fontSize: '50px' }}
+            />
+          </div>
           </div>
           <div className='flex flex-col mt-20 px-4'>
             <h1 className='font-bold text-2xl'>Your Vote is Secure, Your Vote Counts</h1>

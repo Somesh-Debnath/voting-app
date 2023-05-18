@@ -5,7 +5,9 @@ const NavBar=()=>{
     const router=useRouter()
     return(
         <div className="flex mt-8">
-           <h1 className="font-semibold ml-28 pr-80">Logo</h1>
+           <h1 className="ml-28 pr-80 font-medium text-lg font-extrabold text-fuchsia-700">
+                E-VOTING APP
+            </h1>
             <ul className="flex ml-10 space-x-11">
                 <li className="Navlink" onClick={()=>router.push('/')}>Home</li>
                 <li className="Navlink" onClick={()=>router.push('/about')}>About</li>

@@ -13,6 +13,7 @@ import { db } from "../utils/Firebase";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { AppContext, AppContextType } from "./_app";
 import { toast } from 'react-hot-toast';
+import AdminSidebar from "../components/Sidebar/AdminSidebar";
 
 function create_vote() {
     const [showModalOne, setShowModalOne] = useState(false)
@@ -164,38 +165,15 @@ function create_vote() {
     }
   return (
     <div className='flex w-screen m-0 relative md:flex h-screen overflow-hidden'>
-        <div className=" w-auto flex flex-col items-center h-screen
-        shadow-xl pr-12 pb-7">
-            <div className="mt-4">
-            <button onClick={()=>router.push('/')}>Logo</button>
-            </div>
-            <div className=" pl-[3.5rem] mt-24">
-                <ul>
-                    <li className="sidebar__menu--item">
-                        <a href="#">Dashboard</a>
-                    </li>
-                    <li className="sidebar__menu--item">
-                        <a href="#">Voters</a>
-                    </li>
-                    <li className="sidebar__menu--item">
-                        <a href="#">Candidates</a>
-                    </li>  
-                </ul>
-              </div>
-              <button className='mt-48 font-medium bottom-0'>Logout</button>
-        </div>
-
+        
+        <AdminSidebar/>
         
       <div className='flex-1 font-bold h-screen absolute ml-[183px] flex flex-col'>
 
             <div className='flex flex-col'>
                 <div className='px-8 py-4 shadow-lg max-h-[80px] w-screen flex 
                             border-b-2 '>
-                    <h1 className='px-4 font-semibold text-2xl font-sans'>Create Election</h1>
-                    <div className='flex top-5 z-50 right-8 fixed space-x-4'>
-                        <h3>avatar</h3>
-                        <h3>name</h3>
-                    </div>
+                    <h1 className='font-bold text-2xl font-sans text-fuchsia-900'>Create Election</h1>
                 </div>
             </div>
 
