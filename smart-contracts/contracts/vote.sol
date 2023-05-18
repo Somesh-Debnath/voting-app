@@ -1,129 +1,38 @@
-// SPDX-License-Identifier: GPL-3.0
-pragma solidity >=0.7.0 <0.9.0;
-import "hardhat/console.sol";
-contract Vote {
-    
-    struct Voter {
-        uint weight; // weight is accumulated by delegation
-        bool voted;  
-        uint vote;   // index of the voted proposal
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.5.0 <0.9.0;
+
+contract new_vote {
+    struct Vote {
+        string voterName;
+        string candidateId;
+        uint256 timestamp;
+        address voterWalletAddress;
     }
 
+    Vote[] votes;
+    address payable owner;
 
-    struct Candidate {
-        string name; 
-        string email;
-        string role;
-        uint256 id;
-        uint256 voteCount;
-        //uint voteCount; // number of accumulated votes
-    }
-
-  struct Election{
-     Candidate[] candidatesDetails;
-     string title;
-     string description;
-     string org;
-  }
-
-  Election[] public elections;
-
-    address public admin;
-    uint public test;
-    
-    mapping(address => Voter) public voters;
-
-    Candidate[] public candidates;
-    mapping(uint256 => Candidate) public candidatesDetail;
-
-    /// Create a new ballot to choose one of `proposalNames`.
     constructor() {
-        admin = msg.sender;
-        voters[admin].weight = 1;
-        console.log(admin);
-    }
-        
-    //     for (uint i = 0; i < proposalNames.length; i++) {
-          
-    //         candidates.push(Proposal({
-    //             name: proposalNames[i],
-    //             voteCount: 0
-    //         }));
-    //     }
-    // }
-   
-   function addCandidate(string memory _name,string memory _email,string memory _role,uint256 _id)  public {
-       Candidate memory newCandidate=Candidate({
-           name:_name,
-           email:_email,
-           role:_role,
-           id:_id,
-           voteCount:0
-       });
-       candidates.push(newCandidate);
-        candidatesDetail[_id]=newCandidate;
-  }
-
-//     function getCandidates() public view returns(Candidate[] memory){
-//        return candidates;
-//    }
-         
-   
-//    function createVote(string memory _title, string memory _description,string memory _org) public {
-//           Election memory newElection=Election({
-//               //add candidate details
-//               candidatesDetails: candidates,
-//                title:_title,
-//                description:_description,
-//                org:_org
-//            });
-//            elections.push(newElection);
-          
-//       }
-   
-   
-    function giveRightToVote(address voter) external {
-        
-        require(
-            msg.sender == admin,
-            "Only admin can give right to vote."
-        );
-        require(
-            !voters[voter].voted,
-            "The voter already voted."
-        );
-        require(voters[voter].weight == 0);
-        voters[voter].weight = 1;
+        owner = payable(msg.sender);
     }
 
- 
-
-
-    function vote(uint id) external {
-        Voter storage sender = voters[msg.sender];
-        require(sender.weight != 0, "Has no right to vote");
-        require(!sender.voted, "Already voted.");
-        sender.voted = true;
-        sender.vote = id;
-
-       
-        candidates[id].voteCount += sender.weight;
+    function giveVote(string memory voterName, string memory candidateId) public payable {
+        require(msg.sender.balance > 0, "You do not have enough balance to vote");
+        votes.push(Vote(voterName, candidateId, block.timestamp, msg.sender));
     }
 
-    
-    function winningCandidate() public view
-    returns (string memory winnerName_)
-    {
-        uint winningVoteCount = 0;
-        uint256 winningId=0;
-        for (uint p = 0; p < candidates.length; p++) {
-            if (candidates[p].voteCount > winningVoteCount) {
-                winningVoteCount = candidates[p].voteCount;
-                winningId = p;
+    function getVotes() public view returns (Vote[] memory) {
+        return votes;
+    }
+
+    //get vote count by candidate id function
+    function getCountOfVotes(string memory candidateId) public view returns (uint256) {
+        uint count = 0;
+        for(uint i = 0; i < votes.length; i++){
+            if(keccak256(abi.encodePacked(votes[i].candidateId)) == keccak256(abi.encodePacked(candidateId))){
+                count++;
             }
         }
-         winnerName_ = candidates[winningId].name;
+        return count;
     }
-
-    
 }
