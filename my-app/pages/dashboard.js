@@ -7,12 +7,12 @@ import Web3Modal from "web3modal";
 import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar/Sidebar';
-import { db } from "../utils/Firebase";
+import { auth, db } from "../utils/Firebase";
 
 import { ethers } from "ethers";
 import abi from "../contract/new_vote.json";
 import Memos from "../components/Card/Memos.js";
-
+import Avatar from 'react-avatar';
 
 /*
  * This function returns the first linked account found.
@@ -66,6 +66,20 @@ function dashboard() {
     
     renderButton();
   },[])
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentAccount(user.email.charAt(0));
+      } else {
+        setCurrentAccount(null);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   console.log(elections);
   const getProviderOrSigner = async (needSigner = false) => {
@@ -173,9 +187,13 @@ function dashboard() {
             placeholder="Search"
           />
           {renderButton()}
-          <div className="flex fixed space-x-1 top-5 z-50 right-8">
-            <h3>avatar</h3>
-            <h3>name</h3>
+          <div className="flex fixed space-x-1 top-4 z-50 right-10">
+          <Avatar
+              name={currentAccount}
+              size="40"
+              round={true}
+              style={{ fontSize: '50px' }}
+            />
           </div>
         </div>
         <div className="flex flex-col mt-20 px-4">
@@ -224,6 +242,7 @@ function dashboard() {
                     eid={doc.id}
                     indx={can.id}
                     walletConnected={walletConnected}
+                    title = {doc.title}
                   />
                   
                 ))}

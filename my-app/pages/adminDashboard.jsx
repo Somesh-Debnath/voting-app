@@ -55,7 +55,7 @@ function adminDashboard()
             type="search" name="search" 
             id="search" placeholder='Search' />
 
-        <div className="flex fixed space-x-1 top-5 z-50 right-8">
+        <div className="flex fixed space-x-1 top-4 z-50 right-10">
           <Avatar
               name="A D M I N"
               size="40"

@@ -5,7 +5,7 @@ import Web3Modal  from 'web3modal'
 import useAuth from "../../hooks/useAuth";
 import { useRouter } from 'next/router';
 
-function Card({state,walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image}) {
+function Card({state,walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image,title}) {
   
 //const [voted, setVoted] = useState(0);
  const [loading, setLoading] = useState(false);
@@ -119,7 +119,17 @@ console.log(walletConnected);
                  {renderButton()}
                   <button className='bg-white border-[1px] border-[#93278F] ml-2
                   text-sm rounded-2xl text-[#93278F] px-4 py-2'
-                  onClick={()=>router.push("/CandidateDetails")}>View Profile</button>
+                  onClick={()=>router.push({
+                      pathname: '/CandidateDetails',
+                      query: { 
+                        name: Name, 
+                        role: role,
+                        title: title,
+                        image: Image
+                      },
+                    })}>
+                    View Profile
+                  </button>
               </div>
             </div>
         </div>            
