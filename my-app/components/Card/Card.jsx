@@ -72,7 +72,7 @@ web3ModalRef.current = new Web3Modal({
 
 console.log(walletConnected);
   const renderButton = () => {
-    if(walletConnected){
+    if(walletConnected && !voted){
         return <button className={`bg-[#93278F] text-white px-8 py-2
         hover:bg-[#5c0f59] ${voted ? "opacity-50 cursor-not-allowed" : ""}
         text-sm rounded-2xl`}

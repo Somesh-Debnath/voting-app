@@ -14,17 +14,7 @@ const Memos = ({ state }) => {
 
   return (
     <>
-      <p >Messages</p>
-      {memos.map((memo) => {
-        return (
-          <div>
-              <p>
-                {memo.name}
-                {memo.indx}
-              </p><br/>
-          </div>
-        );
-      })}
+     
     </>
   );
 };
