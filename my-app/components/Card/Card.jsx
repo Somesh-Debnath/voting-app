@@ -64,7 +64,7 @@ web3ModalRef.current = new Web3Modal({
   
   const docRef = doc(db, "Elections", eid, "Candidates", indx); 
          updateDoc(docRef, {            
-            count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),     
+            count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid)     
         });
     alert("Successfully Voted for "+Name);
     parentCallback(1);

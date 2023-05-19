@@ -97,7 +97,7 @@ function dashboard() {
 
   const connectWallet = async () => {
     try {
-      const contractAddress = "0x619865F0f6A535AAF322f8bf64aA5Fa35dd56736";
+      const contractAddress = "0x2a2DE5933DB55187Ca5E2Ec0400622FBf5FbEc0f";
       const contractABI = abi.abi;
       const provide = new ethers.providers.Web3Provider(ethereum);
       const signer = provide.getSigner();

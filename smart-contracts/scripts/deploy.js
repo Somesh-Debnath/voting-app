@@ -5,7 +5,7 @@ async function main() {
   A ContractFactory in ethers.js is an abstraction used to deploy new smart contracts,
   so voteContract here is a factory for instances of our vote contract.
   */
-  const voteContract = await ethers.getContractFactory("Vote");
+  const voteContract = await ethers.getContractFactory("new_vote");
 
   // here we deploy the contract
   const deployedvoteContract = await voteContract.deploy();
