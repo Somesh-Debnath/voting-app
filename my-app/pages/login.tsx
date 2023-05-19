@@ -25,12 +25,17 @@ function login() {
   const onSubmit: SubmitHandler<Inputs> = async ({email,password}) => {
 
     // user login
-    if(login){
-      await signIn(email,password)
+    if(email !== process.env.ADMIN_EMAIL) {
+      if(login){
+        await signIn(email,password)
+      }
+      else{
+        await signUp(email,password)
+      }
+    } else {
+      alert("Admin can't login as a user")
     }
-    else{
-      await signUp(email,password)
-    }
+    
   }
 
 const [adminLogin,setAdminLogin]=useState(false)
@@ -58,6 +63,24 @@ const handleClick = async() => {
     console.log(error.message);
   }
 }
+
+  // const handleClick1 = () => {
+  //   try {
+  //     // Check if the email is allowed
+  //     if (userEmail !== process.env.ADMIN_EMAIL) {
+  //       setLogin(true)
+  //     } else {
+  //       alert("Admin can't login as user!!")
+  //     }
+  
+  //     // Reset form and error message
+  //     setUserEmail('');
+  //     setPassword('');
+  
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
 
   
   return (
