@@ -1,37 +1,34 @@
 import { useEffect, useRef, useState } from "react";
-import { doc, setDoc, updateDoc, arrayRemove,arrayUnion,getDocs,collection,query } from "@firebase/firestore";
+import { doc, setDoc, updateDoc, arrayRemove,arrayUnion,getDocs } from "@firebase/firestore";
 import { db} from "../../utils/Firebase";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 import Web3Modal  from 'web3modal'
-//import web3 from '../../constants/web3';
-import { providers, Contract, ethers } from "ethers";
-import useToggleVote from '../../hooks/useToggleVote'
 import useAuth from "../../hooks/useAuth";
- 
-import {VOTE_CONTRACT_ADDRESS,abi} from '../../constants'
-import constants from '../../constants';
 import { useRouter } from 'next/router';
 
-
-
-function Card({walletConnected,people,Name,role,voted,parentCallback,indx,id,eid,Email,Image}) {
+function Card({state,walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image}) {
   
 //const [voted, setVoted] = useState(0);
- 
- //const {user,loading:userloading}=useAuth();
- const [user, setUsers] = useState(null);
+ const [loading, setLoading] = useState(false);
+ const {user,loading:userloading}=useAuth();
  const [owner, setOwner] = useState('');
- const userQuery=collection(db,'users');
-  const [docs,loading,error]=useCollectionData(userQuery);
  console.log(indx, Name)
+ console.log(user?.email , user?.uid)
  const web3ModalRef = useRef();
 
+ //const isVoted=votes.includes(user?.id)
+ //const {toggleVote,isLoading}=useToggleVote({id,isVoted,uid:user?.id});
+// const [walletConnected, setWalletConnected] = useState(false);
+
+// useEffect(() => {
+//   const owner=constants.methods.admin().call();
+//   web3.eth.requestAccounts().then(console.log);
+//   setOwner(owner);
+// }, []);
 console.log(owner);
  const router = useRouter();
 //console.log(FormData.name)
 
 const getProviderOrSigner = async (needSigner = false) => {
-
   // Connect to Metamask
   // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
   const provider = await web3ModalRef.current.connect();
@@ -57,74 +54,56 @@ web3ModalRef.current = new Web3Modal({
 });
 
 
-    const giveVote = async () => {
-      setLoading(true);
-      try {
-        const signer = await getProviderOrSigner();
-        const contract = new Contract(VOTE_CONTRACT_ADDRESS, abi, signer);
-        const tx = await contract.vote(0);
-        const tx2=await contract.candidatesDetail;
-        console.log(tx2);
-        await tx.wait();
-        setVoted(true);
-      } catch (error) {
-        console.log(error);
-      }
-      setLoading(false);
-    };
+    // const giveVote = async () => {
+    //   setLoading(true);
+    //   try {
+    //     const signer = await getProviderOrSigner();
+    //     const contract = new Contract(VOTE_CONTRACT_ADDRESS, abi, signer);
+    //     const tx = await contract.vote(0);
+    //     const tx2=await contract.candidatesDetail;
+    //     console.log(tx2);
+    //     await tx.wait();
+    //     setVoted(true);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    //   setLoading(false);
+    // };
 
-    useEffect(()=>{
-   
-      const getUsers=async()=>{
-        const getUsers=await getDocs(userQuery);
-        const users = getUsers.docs.map((doc)=>({
-          ...doc.data(), id:doc.id
-      }))
-        setUsers(users);        
-      }
-      getUsers();
-    },[])
-
-    console.log(user)
-
+console.log(walletConnected);
   const renderButton = () => {
-    if(walletConnected){
+    if(walletConnected && !voted){
         return <button className={`bg-[#93278F] text-white px-8 py-2
         hover:bg-[#5c0f59] ${voted ? "opacity-50 cursor-not-allowed" : ""}
         text-sm rounded-2xl`}
-        onClick={vot} disabled={voted ? true : false}>
-          Vote
-        </button>   
+        onClick={vot}>Vote</button>   
     }
   }
- const vot=()=>{
+ const vot= async()=>{
+  alert("Voting for "+Name);
+  try{
+    const { contract } = state;
+    console.log(Name, role, contract);
+    // const amount = { value: ethers.utils.parseEther("0.000001") };
+    const transaction = await contract.giveVote(Name, indx);
+    await transaction.wait();
+    console.log("Successfully voted");
+    const noOfVotes = await contract.getCountOfVotes(indx);
+    console.log("no of votes",noOfVotes.toString());
+  }catch(err){
+    console.log(err);
+  }
+  
   const docRef = doc(db, "Elections", eid, "Candidates", indx); 
          updateDoc(docRef, {            
             count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),     
         });
+    alert("Successfully Voted for "+Name);
+    parentCallback(1);
 
-    const docRef2 = doc(db, "users", user?.uid);
-    updateDoc(docRef2, {
-      voted: voted ? arrayRemove(eid) : arrayUnion(eid),
-    });
+    console.log(docRef);
 
-    console.log(user?.voted?.includes(eid));
-
-    const candidateToWatch = user?.uid
-    docRef2.where('votes', 'array-contains', candidateToWatch).onSnapshot((snapshot) => {
-      const candidates = snapshot.docs.map((doc) => console.log(doc.data(),"-->"));
-    })
-    
-    if(user?.voted?.includes(eid)){
-      alert("You have already voted for this election");
-      console.log(user?.voted?.includes(eid));
-    }
-    else{
-      parentCallback(1);
-      console.log(user?.voted?.includes(eid));
-      alert("Your vote has been recorded");
-    }
-}
+  }
  
   return (
     <div className='flex flex-col shadow-lg max-h-[420px]'>
@@ -144,7 +123,7 @@ web3ModalRef.current = new Web3Modal({
               </div>
             </div>
         </div>            
-    
+        
   )
 }
 

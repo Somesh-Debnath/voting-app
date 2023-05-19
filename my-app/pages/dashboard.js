@@ -1,64 +1,51 @@
 import { providers } from "ethers";
 import { collection, doc, getDocs, getFirestore, onSnapshot, query, setDoc } from 'firebase/firestore'
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import React,{ useEffect, useRef, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import Web3Modal from "web3modal";
 import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from '../components/Sidebar/Sidebar';
 import { db } from "../utils/Firebase";
-import {auth} from "../utils/Firebase"
-import Avatar from 'react-avatar';
+
+import { ethers } from "ethers";
+import abi from "../contract/new_vote.json";
+import Memos from "../components/Card/Memos.js";
+
+
+/*
+ * This function returns the first linked account found.
+ * If there is no account linked, it will return null.
+ */
 
 function dashboard() {
-  const userQuery=collection(db,'users');
-  const {user}=useAuth();
-  const [users,setUsers]=useState([]);
+  const router = useRouter();
+  const { logout } = useAuth();
   const [walletConnected, setWalletConnected] = useState(0);
+  
+  //const query=collection(db,'Elections','Elections');
   const electionQuery=collection(db,'Elections');
+  //const CandidatesQuery=collection(db,'Elections','Candidates')  
   const [docs,loading,error]=useCollectionData(electionQuery);
-  const [Voted, setVoted] = useState(0);
+  //const [docs1,loading1,error1]=useCollectionData(CandidatesQuery);
+
+  const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
-  const [userName, setUserName] = useState("")
   const [cardDetails, setCardDetails] = useState([]);
   const [elections,setElections]=useState([]);
 
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        setUserName(user.email.charAt(0) || '');
-      } else {
-        setUserName('');
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  console.log(userName, "-->")
+  const [state, setState] = useState({
+    provide: null,
+    signer: null,
+    contract: null,
+  });
+  const [account, setAccount] = useState("None"); //for smart contract
   
-
-  const getEthereumObject = () =>
-    window.ethereum || window.web3?.currentProvider;
-    useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged(user => {
-        if (user) {
-          setUserName(user.email.charAt(0) || '');
-        } else {
-          setUserName('');
-        }
-      });
-  
-      return () => unsubscribe();
-    }, []);
-  
-    console.log(userName, "-->")
     
   useEffect(()=>{
-    
+   
     const getElections=async()=>{
       const getElections=await getDocs(electionQuery);
       const elections = getElections.docs.map((doc)=>({
@@ -72,14 +59,7 @@ function dashboard() {
       }))
       setCardDetails(candidates);
     })
-    const getUsers=async()=>{
-      const getUsers=await getDocs(userQuery);
-      const users = getUsers.docs.map((doc)=>({
-        ...doc.data(), id:doc.id
-    }))
-      setUsers(users);        
-    }
-    getUsers();
+      
     }
     getElections();
 
@@ -87,17 +67,7 @@ function dashboard() {
     renderButton();
   },[])
 
-  users.map((user1)=>{
-    if(user1?.uid === user?.uid){
-      console.log(user1.username + " " + user1.uid);
-    }
-    // elections.map((election)=>{
-    //   if(user1?.voted?.includes(election.id)){
-    //     alert("You have already voted for this election");
-    //     setVoted(1);
-    //   }
-    // })
-  })
+  console.log(elections);
   const getProviderOrSigner = async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
@@ -127,15 +97,26 @@ function dashboard() {
 
   const connectWallet = async () => {
     try {
-      // Get the provider from web3Modal, which in our case is MetaMask
-      // When used for the first time, it prompts the user to connect their wallet
-      await getProviderOrSigner();
-      setWalletConnected(1);
-    } catch (err) {
-      //console.error(err);
-    }
-  };
-
+      const contractAddress = "0x2a2DE5933DB55187Ca5E2Ec0400622FBf5FbEc0f";
+      const contractABI = abi.abi;
+      const provide = new ethers.providers.Web3Provider(ethereum);
+      const signer = provide.getSigner();
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+        );
+        setAccount(account);
+        setState({ provide, signer, contract });
+      
+        await getProviderOrSigner();
+        setWalletConnected(1);
+        console.log("Transaction is done");
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    
   const disconnectWallet = async () => {
     try {
       // Disconnect the wallet
@@ -172,7 +153,7 @@ function dashboard() {
 
   const handleCallback = (childData) => {
     setVoted(childData);
-    //setVoted(1);
+    setVoted(1);
   };
 
   return (
@@ -193,12 +174,8 @@ function dashboard() {
           />
           {renderButton()}
           <div className="flex fixed space-x-1 top-5 z-50 right-8">
-          <Avatar
-              name={userName}
-              size="40"
-              round={true}
-              style={{ fontSize: '50px' }}
-            />
+            <h3>avatar</h3>
+            <h3>name</h3>
           </div>
         </div>
         <div className="flex flex-col mt-20 px-4">
@@ -223,7 +200,7 @@ function dashboard() {
               <div className="flex flex-row justify-around mt-4">
                 {/* Object.keys(people).map((key) => people[key].name) */}
                 {cardDetails.map((can) => (
-                  <Card
+                  <Card state={state}
                     // key={doc.people[key].uId}
                     // id={doc.people[key].uId}
                     // people={doc.people[key]}
@@ -243,13 +220,14 @@ function dashboard() {
                     Email={can.Email}
                     Image={can.Image}
                     parentCallback={handleCallback}
-                    voted={Voted}
+                    voted={voted}
                     eid={doc.id}
                     indx={can.id}
                     walletConnected={walletConnected}
                   />
                   
                 ))}
+                <Memos state={state} />
             </div>
             </div>
           ))}
