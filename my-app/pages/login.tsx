@@ -10,15 +10,21 @@ interface Inputs{
 }
 function login() {
   const [login,setLogin]=useState(false)
+
+  const [userEmail, setUserEmail] = useState("")
+  const [password, setPassword] = useState("")
+
   const {signIn,signUp} = useAuth()
   const {user,loading}=useAuth();
-  console.log(user);
+  // console.log(user);
   const { register,
      handleSubmit,
       watch,
        formState: { errors } }
       = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async ({email,password}) => {
+
+    // user login
     if(login){
       await signIn(email,password)
     }
@@ -29,19 +35,31 @@ function login() {
 
 const [adminLogin,setAdminLogin]=useState(false)
 const router=useRouter()
-// const handleClick=()=>{
-//   const owner=constants.methods.admin().call();
-//   const address=web3.eth.requestAccounts().then(console.log);
-//   if(owner===address){
-//     setAdminLogin(true)
-//     setLogin(false)
-//   }
-//   else{
-//     setAdminLogin(false)
-//     //alert("You are not an admin")
-//   }
-// }
 
+// admin sign
+const handleClick = async() => {
+
+  const adminEmail = process.env.ADMIN_EMAIL
+  const adminPass = process.env.PASSWORD
+  try {
+    // Check if the email is allowed
+    if (userEmail === adminEmail && password === adminPass) {
+      await signIn(userEmail, password);
+      router.push('./adminDashboard')
+    } else {
+      alert("You are not an admin! Please use the login or signup button!!")
+    }
+
+    // Reset form and error message
+    setUserEmail('');
+    setPassword('');
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+  
   return (
     <div className='flex'>
        <div className='max-w-xl items-center pt-28 pl-16 pr-12 h-screen'>
@@ -59,7 +77,9 @@ const router=useRouter()
                     border-[1.5px] border-[#93278F] 
                     w-full outline-none' type='email'
                      placeholder='Enter your email'
-                     {...register('email',{required:true})} />
+                     {...register('email',{required:true})} 
+                     onChange={(event) => setUserEmail(event.target.value)}
+                     />
                     
                     {errors.email && 
                     <p className="p-1 text-[13px] font-light text-orange-500">Please enter a valid email</p>}
@@ -69,7 +89,9 @@ const router=useRouter()
                     w-full outline-none' 
                     type='password'  
                      placeholder='Enter your password'
-                    {...register('password',{required:true})} />
+                    {...register('password',{required:true})} 
+                    onChange={(event) => setPassword(event.target.value)}
+                    />
                     
                     {errors.password &&
                     <p className="p-1 text-[13px] font-light text-orange-500">
@@ -84,8 +106,9 @@ const router=useRouter()
             
             <div className='flex flex-col mt-5'>
             {/* admin sign in */}
-            <button type='button' onClick={()=>{ 
-            router.push('./adminDashboard')}}
+            {/* <button type='button' onClick={()=>{ 
+            router.push('./adminDashboard')}} */}
+            <button onClick={()=>handleClick()} type="button"
              className=' font-medium text-center'>
              Sign in as Admin</button>
 

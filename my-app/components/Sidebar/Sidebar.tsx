@@ -8,10 +8,10 @@ function Sidebar() {
   return (
     <div className="max-w-[200px] flex flex-col items-center h-screen
     shadow-xl pr-12 pb-7 fixed">
-        <div className="mt-4">
-            <button onClick={()=>router.push('/')}>Logo</button>
+        <div className="mt-6 ml-5 font-medium text-lg font-extrabold text-fuchsia-700">
+            <button onClick={()=>router.push('/')}>E-VOTING APP</button>
         </div>
-        <div className=" pl-[2.5rem] mt-32 text-sm">
+        <div className=" pl-[1.5rem] mt-32 text-sm">
             <ul>
                 <li className="sidebar__menu--item">
                 <button
