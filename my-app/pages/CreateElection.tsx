@@ -41,19 +41,6 @@ function create_vote() {
         })
     }
 
-    function handlePeopleChange(event:any) {
-        const {name, value} = event.target
-        setFormData((prevFormData:any) => {
-            return {
-                ...prevFormData,
-                people: {
-                    ...prevFormData.people,
-                    [name]: value
-                }
-            }
-        })
-    }
-
     const handleDateChange = (newValue: any) => {
         setDateValue(newValue);
         setFormData((prevFormData:any) => {
@@ -66,7 +53,6 @@ function create_vote() {
 
     const handleSubmit = async (e:any) => {
         e.preventDefault()
-        
        const q=query(collection(db, "Elections"));
        const querySnapshot = await getDocs(q);
        const qdata = querySnapshot.docs.map
@@ -78,16 +64,8 @@ function create_vote() {
             description: formData.description,
             orgName: formData.orgName,
             id: eId,
-            people: cardDetails.map((p)=>{return{
-                Name:p.Name,
-                Email:p.Email,
-                Role:p.Role,
-                Image:p.Image,
-                uId:uuid(),
-                count:[]
-            }}),
         });
-        cardDetails.map((p)=>{
+     cardDetails.map((p)=>{
             setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
                 Name:p.Name,
                 Email:p.Email,
@@ -97,61 +75,8 @@ function create_vote() {
                     count:[]
             });
         })
-
-        cardDetails.map((p)=>{
-            setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
-                Name:p.Name,
-                Email:p.Email,
-                    Role:p.Role,
-                    Image:p.Image,
-                    uId:uuid(),
-                    count:[]
-            });
-        })
-
-        toast.success('Successfully created election', {
-            style: {
-              border: '1px solid #713200',
-              padding: '16px',
-              color: '#713200',
-            },
-            iconTheme: {
-              primary: '#713200',
-              secondary: '#FFFAEE',
-            },
-          })
-        //console.log(formData)
-        //console.log("cardDetails", cardDetails)
-
-        const q2=query(collection(db,"Candidates"));
-        const querySnapshot2=await getDocs(q2);
-        const queryData2=querySnapshot2.docs.map((doc)=>doc.data());        
-        console.log(queryData2)
-       cardDetails.map((p)=>{
-         queryData2.map((q)=>{
-            if(p.Email==q.Email){
-              alert("Candidate already exists");
-              return;
-            }
-            if(p.Email=="" || p.Name=="" || p.Role==""){
-              alert("Please fill all the details");
-              return;
-            }
-     
-          addDoc(collection(db,"candidates/"),{
-            Name:p.Name,
-            Email:p.Email,
-            Role:p.Role,
-            Image:p.Image,
-            uId:uuid(),
-            count:0
-          })
-          
-          
-        })
-      }) 
-        e.target.reset()
     }
+    
     const customStyle = {
         maxWidth: 'none',
         width: '900px',
@@ -207,16 +132,17 @@ function create_vote() {
                     <button type="button"
                     className='
                         rounded-xl px-8 py-3 mr-1 text-[#93278F] 
-                        font-semibold border-[1px] border-[#93278F]'
-                        onClick={()=>setShowModalOne(true)
-                        // router.push('/FormCard')
-                        }>Add Candidate</button>
+                        font-semibold border-[1px] border-[#93278F]
+                        hover:bg-[#93278F] hover:text-white'
+                        onClick={()=>setShowModalOne(true)}>Add Candidate</button>
                         <button className='
                         rounded-xl px-8 py-3 mx-2 text-[#93278F] 
-                        font-semibold border-[1px] border-[#93278F]'>Determine Who can Vote</button>
+                        font-semibold border-[1px] border-[#93278F]
+                        hover:bg-[#93278F] hover:text-white'>Determine Who can Vote</button>
                     <button className='
                         rounded-xl px-8 py-3 text-[#93278F] 
-                        font-semibold border-[1px] border-[#93278F]'
+                        font-semibold border-[1px] border-[#93278F]
+                        hover:bg-[#93278F] hover:text-white'
                         onClick={()=>setShowModalTwo(true)}
                         >Voting Duration</button>
                 </div>
@@ -225,8 +151,6 @@ function create_vote() {
                     rounded-xl px-9 py-3 text-white font-semibold'
                    onClick={()=>router.push('/adminDashboard')}>Create Vote</button>
             </form>
-
-
             <Dialog open={showModalOne} 
                   PaperProps={{style: customStyle}} 
                     onClose={()=>setShowModalOne(false)}>
