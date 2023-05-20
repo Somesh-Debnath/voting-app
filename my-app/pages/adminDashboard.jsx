@@ -3,16 +3,16 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { db } from "../utils/Firebase";
-import router, { useRouter } from 'next/router'
+import router, { useRouter } from "next/router";
 import AdminSidebar from "../components/Sidebar/AdminSidebar";
 import Avatar from "react-avatar";
 
 function adminDashboard() {
   const electionQuery = collection(db, "Elections");
   const [docs, loading, error] = useCollectionData(electionQuery);
-  const [cardDetails, setCardDetails] = useState([]);
+  const [cardDetails, setCardDetails] = useState([[]]);
   const [elections, setElections] = useState([]);
-  const router=useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     const getElections = async () => {
@@ -54,7 +54,7 @@ function adminDashboard() {
             placeholder="Search"
           />
 
-          <div className="flex fixed space-x-1 top-5 z-50 right-8">
+          <div className="flex fixed space-x-1 top-4 z-50 right-10">
             <Avatar
               name="A D M I N"
               size="40"
@@ -79,15 +79,16 @@ function adminDashboard() {
             <h1 className="font-bold text-2xl">No Elections</h1>
             <p className="px-1 text-sm font-normal mt-2 text-gray-500">
               Create an election to get started
-              </p>
-              <button className="bg-[#93278F] text-white px-8 py-2
+            </p>
+            <button
+              className="bg-[#93278F] text-white px-8 py-2
               hover:bg-[#5c0f59] text-sm rounded-2xl mt-5"
-              onClick={()=>router.push("/CreateElection")}>
-                Create Election
-                </button>
-                </div>
-                )}
-
+              onClick={() => router.push("/CreateElection")}
+            >
+              Create Election
+            </button>
+          </div>
+        )}
 
         {elections &&
           elections.map((doc) => (
@@ -97,18 +98,22 @@ function adminDashboard() {
                 <span className="font-semibold px-2">{doc.title}</span>
               </div>
               <div className="flex flex-row justify-around mt-4">
-                {cardDetails.map((can) => (
-                  <Card
-                    key={can.uId}
-                    Name={can.Name}
-                    role={can.Role}
-                    id={can.uId}
-                    Email={can.Email}
-                    Image={can.Image}
-                    eid={doc.id}
-                    indx={can.id}
-                  />
-                ))}
+                {cardDetails &&
+                  cardDetails.map(
+                    (can) =>
+                      can.electionId === doc.id && (
+                        <Card
+                          key={can.uId}
+                          Name={can.Name}
+                          role={can.Role}
+                          id={can.uId}
+                          Email={can.Email}
+                          Image={can.Image}
+                          eid={doc.id}
+                          indx={can.id}
+                        />
+                      )
+                  )}
               </div>
             </div>
           ))}

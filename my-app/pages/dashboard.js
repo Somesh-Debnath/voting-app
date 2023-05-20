@@ -1,24 +1,15 @@
 import { providers } from "ethers";
-import {
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  onSnapshot,
-  query,
-  setDoc,
-} from "firebase/firestore";
-import { useRouter } from "next/router";
+import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import Web3Modal from "web3modal";
 import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from "../components/Sidebar/Sidebar";
-import { db } from "../utils/Firebase";
+import { db, auth } from "../utils/Firebase";
 import { ethers } from "ethers";
 import abi from "../contract/new_vote.json";
-import Memos from "../components/Card/Memos.js";
+import Avatar from "react-avatar";
 
 function dashboard() {
   const { logout } = useAuth();
@@ -29,7 +20,7 @@ function dashboard() {
   const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
-  const [cardDetails, setCardDetails] = useState([]);
+  const [cardDetails, setCardDetails] = useState([[]]);
   const [elections, setElections] = useState([]);
 
   const [state, setState] = useState({
@@ -38,6 +29,20 @@ function dashboard() {
     contract: null,
   });
   const [account, setAccount] = useState("None"); //for smart contract
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentAccount(user.email.charAt(0));
+      } else {
+        setCurrentAccount(null);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const getElections = async () => {
@@ -51,20 +56,20 @@ function dashboard() {
         const getCandidates = await getDocs(
           collection(db, "Elections", election.id, "Candidates")
         );
-        console.log('election',election.id)
+        console.log("election", election.id);
         const candidates = getCandidates.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
         }));
-        setCardDetails(candidates);
-        console.log("Candidates",candidates);
+        setCardDetails((prev) => [...prev, ...candidates]);
+        console.log("candidates", candidates);
       });
     };
     getElections();
     renderButton();
   }, []);
 
-  console.log("CardDetails",cardDetails);
+  console.log("CardDetails", cardDetails);
 
   //console.log(elections);
   const getProviderOrSigner = async (needSigner = false) => {
@@ -113,29 +118,23 @@ function dashboard() {
       await web3ModalRef.current.clearCachedProvider();
       setWalletConnected(0);
       localStorage.setItem("walletConnected", 0);
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
     }
   };
 
   const renderButton = () => {
     const connected = Number(localStorage.getItem("walletConnected"));
-         return (
-        <button
-          className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
+    return (
+      <button
+        className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
       text-white font-semibold text-sm top-4 z-50 right-[10rem]"
-          onClick={ connected && connected ? disconnectWallet : connectWallet}
-        >
-          {connected && connected ? "Disconnect Wallet" : "Connect Wallet"}
-        </button>
-      );
+        onClick={connected && connected ? disconnectWallet : connectWallet}
+      >
+        {connected && connected ? "Disconnect Wallet" : "Connect Wallet"}
+      </button>
+    );
   };
-
-  // const handleCallback = (childData) => {
-  //   setVoted(childData);
-  //   setVoted(1);
-  // };
 
   return (
     <div className="flex w-screen m-0  h-screen">
@@ -154,9 +153,13 @@ function dashboard() {
             placeholder="Search"
           />
           {renderButton()}
-          <div className="flex fixed space-x-1 top-5 z-50 right-8">
-            <h3>avatar</h3>
-            <h3>name</h3>
+          <div className="flex fixed space-x-1 top-4 z-50 right-10">
+            <Avatar
+              name={currentAccount}
+              size="40"
+              round={true}
+              style={{ fontSize: "50px" }}
+            />
           </div>
         </div>
         <div className="flex flex-col mt-20 px-4">
@@ -178,23 +181,25 @@ function dashboard() {
               </div>
 
               <div className="flex flex-row justify-around mt-4">
-                {cardDetails.map((can) => (
-                  <Card
-                    state={state}
-                    key={can.uId}
-                    Name={can.Name}
-                    role={can.Role}
-                    id={can.uId}
-                    Email={can.Email}
-                    Image={can.Image}
-                    //parentCallback={handleCallback}
-                    //voted={voted}
-                    eid={doc.id}
-                    indx={can.id}
-                    walletConnected={walletConnected}
-                  />
-                ))}
-                
+                {cardDetails &&
+                  cardDetails.map(
+                    (can) =>
+                      can.electionId === doc.id && (
+                        <Card
+                          state={state}
+                          key={can.uId}
+                          Name={can.Name}
+                          role={can.Role}
+                          id={can.uId}
+                          Email={can.Email}
+                          Image={can.Image}
+                          title={doc.title}
+                          eid={doc.id}
+                          indx={can.id}
+                          walletConnected={walletConnected}
+                        />
+                      )
+                  )}
               </div>
             </div>
           ))}
