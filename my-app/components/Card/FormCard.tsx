@@ -1,11 +1,4 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-} from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { produce } from "immer";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -100,7 +93,14 @@ const FormCard = () => {
               accept="image/*"
               name="Image"
               onChange={(e) => {
+                //use firebase storage to store the image
+                const storage=getStorage();
+                const file=e.target.files[0];
+                console.log(file);
+                const storageRef=ref(storage,file.name);
+                uploadBytes(storageRef,file);
                 const image = e.target.value;
+
                 setPeople((currentPeople) =>
                   produce(currentPeople, (v) => {
                     v[index].Image = image;

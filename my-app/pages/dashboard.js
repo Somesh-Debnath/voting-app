@@ -51,19 +51,22 @@ function dashboard() {
         const getCandidates = await getDocs(
           collection(db, "Elections", election.id, "Candidates")
         );
+        console.log('election',election.id)
         const candidates = getCandidates.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
         }));
         setCardDetails(candidates);
+        console.log("Candidates",candidates);
       });
     };
     getElections();
-
     renderButton();
   }, []);
 
-  console.log(elections);
+  console.log("CardDetails",cardDetails);
+
+  //console.log(elections);
   const getProviderOrSigner = async (needSigner = false) => {
     const provider = await web3ModalRef.current.connect();
     const web3Provider = new providers.Web3Provider(provider);
@@ -85,7 +88,7 @@ function dashboard() {
 
   const connectWallet = async () => {
     try {
-      const contractAddress = "0x08a55BA39df32321d5771C6a772796E4F02Db133";
+      const contractAddress = "0x544624eF5A590E802817CFfe1dDA655260c4E914";
       const contractABI = abi.abi;
       const provide = new ethers.providers.Web3Provider(ethereum);
       const signer = provide.getSigner();
@@ -99,7 +102,7 @@ function dashboard() {
 
       await getProviderOrSigner();
       setWalletConnected(1);
-      console.log("Transaction is done");
+      localStorage.setItem("walletConnected", 1);
     } catch (err) {
       console.error(err);
     }
@@ -109,7 +112,7 @@ function dashboard() {
     try {
       await web3ModalRef.current.clearCachedProvider();
       setWalletConnected(0);
-      console.log("Transaction is done");
+      localStorage.setItem("walletConnected", 0);
     }
     catch (err) {
       console.error(err);
@@ -117,33 +120,22 @@ function dashboard() {
   };
 
   const renderButton = () => {
-    if (!walletConnected) {
-      return (
+    const connected = Number(localStorage.getItem("walletConnected"));
+         return (
         <button
           className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
       text-white font-semibold text-sm top-4 z-50 right-[10rem]"
-          onClick={connectWallet}
+          onClick={ connected && connected ? disconnectWallet : connectWallet}
         >
-          Connect Wallet to vote
+          {connected && connected ? "Disconnect Wallet" : "Connect Wallet"}
         </button>
       );
-    } else {
-      return (
-        <button
-          className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
-      text-white font-semibold text-sm top-4 z-50 right-[10rem]"
-          onClick={disconnectWallet}
-        >
-          Disconnect Wallet
-        </button>
-      );
-    }
   };
 
-  const handleCallback = (childData) => {
-    setVoted(childData);
-    setVoted(1);
-  };
+  // const handleCallback = (childData) => {
+  //   setVoted(childData);
+  //   setVoted(1);
+  // };
 
   return (
     <div className="flex w-screen m-0  h-screen">
@@ -180,8 +172,8 @@ function dashboard() {
         {elections &&
           elections.map((doc) => (
             <div>
-              <div className="flex mt-5 mx-[11px]">
-                <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+              <div className="flex mt-5  mx-[13px]">
+                <div className="w-[10px] h-[10px] ml-5 mt-[6.7px] bg-[#93278F] rounded-full"></div>
                 <span className="font-semibold px-2">{doc.title}</span>
               </div>
 
@@ -195,14 +187,14 @@ function dashboard() {
                     id={can.uId}
                     Email={can.Email}
                     Image={can.Image}
-                    parentCallback={handleCallback}
-                    voted={voted}
+                    //parentCallback={handleCallback}
+                    //voted={voted}
                     eid={doc.id}
                     indx={can.id}
                     walletConnected={walletConnected}
                   />
                 ))}
-                <Memos state={state} />
+                
               </div>
             </div>
           ))}
