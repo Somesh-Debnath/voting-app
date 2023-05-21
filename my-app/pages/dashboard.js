@@ -1,40 +1,27 @@
 import { providers } from "ethers";
-import { collection, doc, getDocs, getFirestore, onSnapshot, query, setDoc } from 'firebase/firestore'
-import { useRouter } from "next/router";
-import React,{ useEffect, useRef, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import Web3Modal from "web3modal";
 import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
-import Sidebar from '../components/Sidebar/Sidebar';
-import { auth, db } from "../utils/Firebase";
-
+import Sidebar from "../components/Sidebar/Sidebar";
+import { db, auth } from "../utils/Firebase";
 import { ethers } from "ethers";
 import abi from "../contract/new_vote.json";
-import Memos from "../components/Card/Memos.js";
-import Avatar from 'react-avatar';
-
-/*
- * This function returns the first linked account found.
- * If there is no account linked, it will return null.
- */
+import Avatar from "react-avatar";
 
 function dashboard() {
-  const router = useRouter();
   const { logout } = useAuth();
   const [walletConnected, setWalletConnected] = useState(0);
-  
-  //const query=collection(db,'Elections','Elections');
-  const electionQuery=collection(db,'Elections');
-  //const CandidatesQuery=collection(db,'Elections','Candidates')  
-  const [docs,loading,error]=useCollectionData(electionQuery);
-  //const [docs1,loading1,error1]=useCollectionData(CandidatesQuery);
 
+  const electionQuery = collection(db, "Elections");
+  const [docs, loading, error] = useCollectionData(electionQuery);
   const [voted, setVoted] = useState(0);
   const web3ModalRef = useRef();
   const [currentAccount, setCurrentAccount] = useState("");
-  const [cardDetails, setCardDetails] = useState([]);
-  const [elections,setElections]=useState([]);
+  const [cardDetails, setCardDetails] = useState([[]]);
+  const [elections, setElections] = useState([]);
 
   const [state, setState] = useState({
     provide: null,
@@ -42,30 +29,6 @@ function dashboard() {
     contract: null,
   });
   const [account, setAccount] = useState("None"); //for smart contract
-  
-    
-  useEffect(()=>{
-   
-    const getElections=async()=>{
-      const getElections=await getDocs(electionQuery);
-      const elections = getElections.docs.map((doc)=>({
-        ...doc.data(), id:doc.id
-    }))
-      setElections(elections);
-      elections.map(async (election)=>{
-        const getCandidates=await getDocs(collection(db,'Elections',election.id,'Candidates'));
-        const candidates = getCandidates.docs.map((doc)=>({
-          ...doc.data(), id:doc.id
-      }))
-      setCardDetails(candidates);
-    })
-      
-    }
-    getElections();
-
-    
-    renderButton();
-  },[])
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -81,28 +44,47 @@ function dashboard() {
     };
   }, []);
 
-  console.log(elections);
+  useEffect(() => {
+    const getElections = async () => {
+      const getElections = await getDocs(electionQuery);
+      const elections = getElections.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setElections(elections);
+      elections.map(async (election) => {
+        const getCandidates = await getDocs(
+          collection(db, "Elections", election.id, "Candidates")
+        );
+        console.log("election", election.id);
+        const candidates = getCandidates.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setCardDetails((prev) => [...prev, ...candidates]);
+        console.log("candidates", candidates);
+      });
+    };
+    getElections();
+    renderButton();
+  }, []);
+
+  console.log("CardDetails", cardDetails);
+
+  //console.log(elections);
   const getProviderOrSigner = async (needSigner = false) => {
-    // Connect to Metamask
-    // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
     const provider = await web3ModalRef.current.connect();
     const web3Provider = new providers.Web3Provider(provider);
-    //console.log("web3Provider", web3Provider);
-
-    // If user is not connected to the Goerli network, let them know and throw an error
     const { chainId } = await web3Provider.getNetwork();
-    if (chainId !== 5) {
-      window.alert("Change the network to Goerli");
-      throw new Error("Change network to Goerli");
+    if (chainId != 11155111) {
+      alert("Please switch to Sepolia network");
     }
-
     if (needSigner) {
       const signer = web3Provider.getSigner();
       return signer;
     }
     return web3Provider;
   };
-
   web3ModalRef.current = new Web3Modal({
     network: "sepolia",
     providerOptions: {},
@@ -111,7 +93,7 @@ function dashboard() {
 
   const connectWallet = async () => {
     try {
-      const contractAddress = "0x2a2DE5933DB55187Ca5E2Ec0400622FBf5FbEc0f";
+      const contractAddress = "0x544624eF5A590E802817CFfe1dDA655260c4E914";
       const contractABI = abi.abi;
       const provide = new ethers.providers.Web3Provider(ethereum);
       const signer = provide.getSigner();
@@ -119,55 +101,35 @@ function dashboard() {
         contractAddress,
         contractABI,
         signer
-        );
-        setAccount(account);
-        setState({ provide, signer, contract });
-      
-        await getProviderOrSigner();
-        setWalletConnected(1);
-        console.log("Transaction is done");
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    
-  const disconnectWallet = async () => {
-    try {
-      // Disconnect the wallet
-      await web3ModalRef.current.clearCachedProvider();
-      setWalletConnected(0);
+      );
+      setAccount(account);
+      setState({ provide, signer, contract });
+
+      await getProviderOrSigner();
+      setWalletConnected(1);
+      localStorage.setItem("walletConnected", 1);
     } catch (err) {
-      //console.error(err);
+      console.error(err);
     }
+  };
+
+  const disconnectWallet = () => {
+    setWalletConnected(0);
+    localStorage.setItem("walletConnected", 0);
+    
   };
 
   const renderButton = () => {
-    if (!walletConnected) {
-      return (
-        <button
-          className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
+    const connected = Number(localStorage.getItem("walletConnected"));
+    return (
+      <button
+        className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
       text-white font-semibold text-sm top-4 z-50 right-[10rem]"
-          onClick={connectWallet}
-        >
-          Connect Wallet to vote
-        </button>
-      );
-    } else {
-      return (
-        <button
-          className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
-      text-white font-semibold text-sm top-4 z-50 right-[10rem]"
-          onClick={disconnectWallet}
-        >
-          Disconnect Wallet
-        </button>
-      );
-    }
-  };
-
-  const handleCallback = (childData) => {
-    setVoted(childData);
-    setVoted(1);
+        onClick={connected ? disconnectWallet : connectWallet}
+      >
+        {connected ? "Disconnect Wallet" : "Connect Wallet"}
+      </button>
+    );
   };
 
   return (
@@ -188,11 +150,11 @@ function dashboard() {
           />
           {renderButton()}
           <div className="flex fixed space-x-1 top-4 z-50 right-10">
-          <Avatar
+            <Avatar
               name={currentAccount}
               size="40"
               round={true}
-              style={{ fontSize: '50px' }}
+              style={{ fontSize: "50px" }}
             />
           </div>
         </div>
@@ -201,58 +163,44 @@ function dashboard() {
             Your Vote is Secure, Your Vote Counts
           </h1>
           <p className="px-1 text-sm font-normal mt-2 text-gray-500">
-          You can vote for only one candidate
+            You can vote for only one candidate
           </p>
         </div>
 
-        
-        
-          {loading && "Loading..."}
-          {elections && elections.map((doc) => (
+        {loading && "Loading..."}
+        {elections &&
+          elections.map((doc) => (
             <div>
-              <div className="flex mt-5 mx-[11px]">
-              <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
-              <span className="font-semibold px-2">{doc.title}</span>
+              <div className="flex mt-5  mx-[13px]">
+                <div className="w-[10px] h-[10px] ml-5 mt-[6.7px] bg-[#93278F] rounded-full"></div>
+                <span className="font-semibold px-2">{doc.title}</span>
               </div>
-              
+
               <div className="flex flex-row justify-around mt-4">
-                {/* Object.keys(people).map((key) => people[key].name) */}
-                {cardDetails.map((can) => (
-                  <Card state={state}
-                    // key={doc.people[key].uId}
-                    // id={doc.people[key].uId}
-                    // people={doc.people[key]}
-                    // indx={key}
-                    // walletConnected={walletConnected}
-                    // Name={doc.people[key].Name}
-                    // role={doc.people[key].Role}
-                    // Email={doc.people[key].Email}
-                    // Image={doc.people[key].Image}
-                    // parentCallback={handleCallback}
-                    // voted={voted}
-                    // eid={doc.id}
-                    key={can.uId}
-                    Name={can.Name}
-                    role={can.Role}
-                    id={can.uId}
-                    Email={can.Email}
-                    Image={can.Image}
-                    parentCallback={handleCallback}
-                    voted={voted}
-                    eid={doc.id}
-                    indx={can.id}
-                    walletConnected={walletConnected}
-                    title = {doc.title}
-                  />
-                  
-                ))}
-                <Memos state={state} />
-            </div>
+                {cardDetails &&
+                  cardDetails.map(
+                    (can) =>
+                      can.electionId === doc.id && (
+                        <Card
+                          state={state}
+                          key={can.uId}
+                          Name={can.Name}
+                          role={can.Role}
+                          id={can.uId}
+                          Email={can.Email}
+                          Image={can.Image}
+                          title={doc.title}
+                          eid={doc.id}
+                          indx={can.id}
+                          walletConnected={walletConnected}
+                        />
+                      )
+                  )}
+              </div>
             </div>
           ))}
-        </div>
       </div>
-  
+    </div>
   );
 }
 
