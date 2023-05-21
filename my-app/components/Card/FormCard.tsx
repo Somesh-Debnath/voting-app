@@ -94,11 +94,11 @@ const FormCard = () => {
               name="Image"
               onChange={(e) => {
                 //use firebase storage to store the image
-                const storage=getStorage();
-                const file=e.target.files[0];
-                console.log(file);
-                const storageRef=ref(storage,file.name);
-                uploadBytes(storageRef,file);
+                // const storage=getStorage();
+                // const file=e.target.files[0];
+                // console.log(file);
+                // const storageRef=ref(storage,file.name);
+                // uploadBytes(storageRef,file);
                 const image = e.target.value;
 
                 setPeople((currentPeople) =>

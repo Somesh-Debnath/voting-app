@@ -11,12 +11,16 @@ import useAuth from "../../hooks/useAuth";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/router";
 
+<<<<<<< HEAD
+function Card({state,walletConnected,people,Name,role,parentCallback,voted,indx,id,eid,Email,Image,title}) {
+=======
 function Card({ state, walletConnected, Name, role, indx, eid, title }) {
   const [voted, setVoted] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState("");
+>>>>>>> 6ae471874a4f1efba19287efb76ba23109c50ccf
   
 
   useEffect(() => {
@@ -101,6 +105,28 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
         <h3>{Name}</h3>
         <h2 className="font-bold text-md mb-2">{role}</h2>
 
+<<<<<<< HEAD
+              <div className='flex mx-1 mb-4'>
+                 {renderButton()}
+                  <button className='bg-white border-[1px] border-[#93278F] ml-2
+                  text-sm rounded-2xl text-[#93278F] px-4 py-2'
+                  onClick={()=>router.push({
+                      pathname: '/CandidateDetails',
+                      query: { 
+                        name: Name, 
+                        role: role,
+                        title: title,
+                        image: Image
+                      },
+                    })}>
+                    View Profile
+                  </button>
+              </div>
+            </div>
+        </div>            
+        
+  )
+=======
         <div className="flex mx-1 mb-4">
           {renderButton()}
           <button
@@ -124,6 +150,7 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
       </div>
     </div>
   );
+>>>>>>> 6ae471874a4f1efba19287efb76ba23109c50ccf
 }
 
 export default Card;

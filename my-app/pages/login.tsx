@@ -25,12 +25,41 @@ function login() {
   } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
     // user login
+<<<<<<< HEAD
+    if(email !== process.env.ADMIN_EMAIL) {
+      if(login){
+        await signIn(email,password)
+      }
+      else{
+        await signUp(email,password)
+      }
+    } else {
+      alert("Admin can't login as a user")
+    }
+    
+  }
+
+const [adminLogin,setAdminLogin]=useState(false)
+const router=useRouter()
+
+// admin sign
+const handleClick = async() => {
+
+  const adminEmail = process.env.ADMIN_EMAIL
+  const adminPass = process.env.PASSWORD
+  try {
+    // Check if the email is allowed
+    if (userEmail === adminEmail && password === adminPass) {
+      await signIn(userEmail, password);
+      router.push('./adminDashboard')
+=======
     if (email !== process.env.ADMIN_EMAIL) {
       if (login) {
         await signIn(email, password);
       } else {
         await signUp(email, password);
       }
+>>>>>>> 6ae471874a4f1efba19287efb76ba23109c50ccf
     } else {
       alert("Admin can't login as a user");
     }
@@ -60,6 +89,28 @@ function login() {
     }
   };
 
+<<<<<<< HEAD
+  // const handleClick1 = () => {
+  //   try {
+  //     // Check if the email is allowed
+  //     if (userEmail !== process.env.ADMIN_EMAIL) {
+  //       setLogin(true)
+  //     } else {
+  //       alert("Admin can't login as user!!")
+  //     }
+  
+  //     // Reset form and error message
+  //     setUserEmail('');
+  //     setPassword('');
+  
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
+
+  
+=======
+>>>>>>> 6ae471874a4f1efba19287efb76ba23109c50ccf
   return (
     <div className="flex">
       <div className="max-w-xl items-center pt-28 pl-16 pr-12 h-screen">
