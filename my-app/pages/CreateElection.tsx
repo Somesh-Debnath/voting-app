@@ -47,15 +47,15 @@ function create_vote() {
     });
   }
 
-  const handleDateChange = (newValue: any) => {
-    setDateValue(newValue);
-    setFormData((prevFormData: any) => {
-      return {
-        ...prevFormData,
-        dateValue: dateValue,
-      };
-    });
-  };
+    //date change creates two elections
+    //one with current date
+    //another correctly with the duration
+
+    const handleDateChange = (newValue: any) => {
+        setDateValue(newValue);
+        console.log(newValue, "ehere")
+        // handleChange(newValue);
+    }
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -71,6 +71,7 @@ function create_vote() {
       description: formData.description,
       orgName: formData.orgName,
       id: eId,
+      duration: dateValue.format()
     });
     cardDetails.map((p) => {
       setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
@@ -126,6 +127,7 @@ function create_vote() {
               placeholder="TITLE"
               required
             />
+            <h2 className="font-bold mb-2">DESCRIPTION</h2>
             <input
               className="bg-white rounded-lg p-4  my-3
                     border-[1px] border-[#93278F] 
