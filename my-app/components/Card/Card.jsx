@@ -96,7 +96,8 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
     <div className="flex flex-col shadow-lg max-h-[420px]">
       <div className="flex flex-col items-center ">
         <div className="h-[58px] w-[58px] rounded-full">
-        <img src={imageUrl} alt="Firebase Image" onError={(e) => console.log(e)}  referrerPolicy="no-referrer"/>
+        <img src={imageUrl} class="rounded-full h-[60px] w-[60px]  mt-[10]"
+        alt="" onError={(e) => console.log(e)}  referrerPolicy="no-referrer"/>
         </div>
         <h3>{Name}</h3>
         <h2 className="font-bold text-md mb-2">{role}</h2>
@@ -113,7 +114,8 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
                   name: Name,
                   role: role,
                   title: title,
-                  image: Image,
+                  image: imageUrl,
+                  email: Email
                 },
               })
             }

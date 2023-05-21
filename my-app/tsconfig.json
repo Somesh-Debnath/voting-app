@@ -16,6 +16,6 @@
     "incremental": true,
     "useUnknownInCatchVariables": false
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/dashboard.jsx", "components/Card/Card.jsx", "components/Card/Card.jsx", "pages/adminDashboard.jsx", "context/AppContext.jsx", "constants/web3.js", "constants/index.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/dashboard.jsx", "components/Card/Card.jsx", "components/Card/Card.jsx", "pages/adminDashboard.jsx", "context/AppContext.jsx", "constants/web3.js", "constants/index.js", "pages/CandidateDetails.jsx"],
   "exclude": ["node_modules"]
 }

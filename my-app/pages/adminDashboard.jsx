@@ -6,6 +6,7 @@ import { db } from "../utils/Firebase";
 import router, { useRouter } from "next/router";
 import AdminSidebar from "../components/Sidebar/AdminSidebar";
 import Avatar from "react-avatar";
+import Countdown from "../components/Card/Countdown"
 
 function adminDashboard() {
   const electionQuery = collection(db, "Elections");
@@ -30,7 +31,7 @@ function adminDashboard() {
           ...doc.data(),
           id: doc.id,
         }));
-        setCardDetails(candidates);
+        setCardDetails((prev) => [...prev, ...candidates]);
       });
     };
     getElections();
@@ -96,6 +97,7 @@ function adminDashboard() {
               <div className="flex mt-5 mx-[11px]">
                 <div className="w-[10px] h-[10px] ml-3 mt-[6.7px] bg-[#93278F] rounded-full"></div>
                 <span className="font-semibold px-2">{doc.title}</span>
+                <div className="font-semibold px-10 right-8"><Countdown targetDate={doc.duration} /></div>
               </div>
               <div className="flex flex-row justify-around mt-4">
                 {cardDetails &&

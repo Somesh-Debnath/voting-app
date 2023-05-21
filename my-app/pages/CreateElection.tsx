@@ -35,7 +35,7 @@ function create_vote() {
     dateValue: "",
   });
 
-  const [dateValue, setDateValue] = useState<any>(dayjs("2022-08-18T09:11:54"));
+  const [dateValue, setDateValue] = useState<any>(dayjs());
   const router = useRouter();
 
   function handleChange(event: any) {
@@ -47,15 +47,15 @@ function create_vote() {
     });
   }
 
-  const handleDateChange = (newValue: any) => {
-    setDateValue(newValue);
-    setFormData((prevFormData: any) => {
-      return {
-        ...prevFormData,
-        dateValue: dateValue,
-      };
-    });
-  };
+    //date change creates two elections
+    //one with current date
+    //another correctly with the duration
+
+    const handleDateChange = (newValue: any) => {
+        setDateValue(newValue);
+        console.log(newValue, "ehere")
+        // handleChange(newValue);
+    }
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -71,6 +71,7 @@ function create_vote() {
       description: formData.description,
       orgName: formData.orgName,
       id: eId,
+      duration: dateValue.format()
     });
     cardDetails.map((p) => {
       setDoc(doc(db, `Elections/${eId}/Candidates`, uuid()), {
@@ -126,6 +127,7 @@ function create_vote() {
               placeholder="TITLE"
               required
             />
+            <h2 className="font-bold mb-2">DESCRIPTION</h2>
             <input
               className="bg-white rounded-lg p-4  my-3
                     border-[1px] border-[#93278F] 
@@ -160,15 +162,8 @@ function create_vote() {
             >
               Add Candidate
             </button>
-            <button
-              className="
-                        rounded-xl px-8 py-3 mx-2 text-[#93278F] 
-                        font-semibold border-[1px] border-[#93278F]
-                        hover:bg-[#93278F] hover:text-white"
-            >
-              Determine Who can Vote
-            </button>
-            <button
+
+            <button type="button"
               className="
                         rounded-xl px-8 py-3 text-[#93278F] 
                         font-semibold border-[1px] border-[#93278F]
@@ -225,7 +220,7 @@ function create_vote() {
                     />
                   </LocalizationProvider>
 
-                  <button
+                  <button type="button"
                     className="bg-[#93278F]
                             rounded-xl px-9 py-3 text-white font-semibold mt-4"
                   >

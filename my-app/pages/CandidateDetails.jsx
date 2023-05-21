@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 function CandidateDetails() {
   const router = useRouter();
-  const { name, role, title, image } = router.query;
+  const { name, role, title, image, email } = router.query;
+  console.log(image);
 
   //campaign speech random
   const campaignSpeeches = [
@@ -25,7 +26,7 @@ function CandidateDetails() {
 
   return (
     <div className="flex flex-col">
-      <img className="sticky w-full -mt-35" src="/bgForCandidateCard.png" />
+      <img className="sticky max-w-[screen] mt-[-115px] " src="/bgForCandidateCard.png" />
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -45,17 +46,15 @@ function CandidateDetails() {
         className="absolute text-center text-white 
             ml-[420px] mt-16"
       >
-        <h1 className="text-6xl p-1 mb-2">Vote for {name} </h1>
-        <h2 className="text-2xl">
-          For
-          <br />
-          {title} Election
+        <h1 className="text-6xl p-1 ml-28 mb-3">Vote for {name} </h1>
+        <h2 className="text-2xl ml-28">
+          For   {title} Election
         </h2>
       </div>
       <div className="text-2xl absolute w-10/12  mt-56 ml-40 ">
         <img
           className="rounded-full absolute h-40 w-40 ml-[70px] mt-10"
-          src="/w-removebg-preview.png"
+          src={image}
           alt="w"
         />
         <p
@@ -71,11 +70,18 @@ function CandidateDetails() {
           {role}
           <br />
         </p>
+        <p
+          className="text-xl mt-5 ml-[280px]
+                     text-white"
+        >
+          {email}
+          <br />
+        </p>
         <p className="text-xl ml-[265px] p-1.5 font-italic text-white">
           “ {randomSpeech} “<br />
         </p>
       </div>
-      <h2 className="text-4xl font-bold ml-24">Campaign Promise</h2>
+      <h2 className="text-4xl font-bold mt-5 ml-24">Campaign Promise</h2>
       <p className="text-2xl ml-24 mt-10">Ladies and gentlemen,</p>
       <p className="text-xl ml-24 my-20">
         Today, I stand before you as a candidate for the upcoming election,
