@@ -113,14 +113,10 @@ function dashboard() {
     }
   };
 
-  const disconnectWallet = async () => {
-    try {
-      await web3ModalRef.current.clearCachedProvider();
-      setWalletConnected(0);
-      localStorage.setItem("walletConnected", 0);
-    } catch (err) {
-      console.error(err);
-    }
+  const disconnectWallet = () => {
+    setWalletConnected(0);
+    localStorage.setItem("walletConnected", 0);
+    
   };
 
   const renderButton = () => {
@@ -129,9 +125,9 @@ function dashboard() {
       <button
         className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
       text-white font-semibold text-sm top-4 z-50 right-[10rem]"
-        onClick={connected && connected ? disconnectWallet : connectWallet}
+        onClick={connected ? disconnectWallet : connectWallet}
       >
-        {connected && connected ? "Disconnect Wallet" : "Connect Wallet"}
+        {connected ? "Disconnect Wallet" : "Connect Wallet"}
       </button>
     );
   };

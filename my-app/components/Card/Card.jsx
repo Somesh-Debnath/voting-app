@@ -16,30 +16,26 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
-  let url = "";
-  const storage = getStorage();
-  const storageRef = ref(storage, "images/" + Name + ".jpg");
-  getDownloadURL(storageRef)
-    .then((url) => {
-      url = url + "?alt=media";
-      console.log(url);
-    })
-    .catch((error) => {
-      // Handle any errors
-      switch (error.code) {
-        case "storage/object-not-found":
-          // File doesn't exist
-          break;
-        case "storage/unauthorized":
-          // User doesn't have permission to access the object
-          break;
-        case "storage/canceled":
-          // User canceled the upload
-          break;
-      }
-    });
+  const [imageUrl, setImageUrl] = useState("");
+  
 
   useEffect(() => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `${Name}.jpg`);
+    console.log(storageRef);
+      try {
+        let url = getDownloadURL(storageRef);
+        url.then((result) => {
+          setImageUrl(result);
+          console.log(imageUrl);
+        }
+        
+        );
+  
+      } catch (err) {
+        console.log(err);
+      }
+
     //check if user has voted
     const checkVoted = async () => {
       const docRef = doc(db, "users", user?.uid);
@@ -100,7 +96,7 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
     <div className="flex flex-col shadow-lg max-h-[420px]">
       <div className="flex flex-col items-center ">
         <div className="h-[58px] w-[58px] rounded-full">
-          <img className="object-contain" src={url} alt="" id={Name} />
+        <img src={imageUrl} alt="Firebase Image" onError={(e) => console.log(e)}  referrerPolicy="no-referrer"/>
         </div>
         <h3>{Name}</h3>
         <h2 className="font-bold text-md mb-2">{role}</h2>
