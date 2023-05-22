@@ -11,13 +11,14 @@ import useAuth from "../../hooks/useAuth";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/router";
 
-function Card({ state, walletConnected, Name, role, indx, eid, title }) {
+function Card({ state, walletConnected, Name, role, indx, eid, title, Email }) {
   const [voted, setVoted] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState("");
   
+
 
   useEffect(() => {
     const storage = getStorage();
@@ -37,24 +38,27 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
       }
 
     //check if user has voted
-    const checkVoted = async () => {
+      const checkVoted = async () => {
       const docRef = doc(db, "users", user?.uid);
       const docSnap = await getDoc(docRef);
       const data = docSnap.data();
       if (data?.voted?.includes(eid)) {
         setVoted(1);
+        
         setIsButtonDisabled(true);
       }
     };
     checkVoted();
-  }, []);
+
+  },[setVoted, setIsButtonDisabled, imageUrl, voted]);
 
   const renderButton = () => {
+    const v=localStorage.getItem(`voted ${eid}`);
     if (walletConnected) {
       return (
         <button
           className={`bg-[#93278F] text-white px-8 py-2
-        hover:bg-[#5c0f59] ${voted ? "opacity-50 cursor-not-allowed" : ""}
+        hover:bg-[#5c0f59] ${v ? "opacity-50 cursor-not-allowed" : ""}
         text-sm rounded-2xl`}
           onClick={vot}
           disabled={isButtonDisabled}
@@ -89,11 +93,13 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
     updateDoc(docRef2, {
       voted: arrayUnion(eid),
     });
+    setVoted(1);
+    localStorage.setItem(`voted ${eid}`, 1);
     setIsButtonDisabled(true);
   };
 
   return (
-    <div className="flex flex-col shadow-lg max-h-[420px]">
+    <div className="flex flex-col p-3 rounded-sm shadow-lg max-h-[420px]">
       <div className="flex flex-col items-center ">
         <div className="h-[58px] w-[58px] rounded-full">
         <img src={imageUrl} class="rounded-full h-[60px] w-[60px]  mt-[10]"

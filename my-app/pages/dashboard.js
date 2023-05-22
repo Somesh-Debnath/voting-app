@@ -3,6 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import Web3Modal from "web3modal";
+import Countdown from "../components/Card/Countdown"
 import Card from "../components/Card/Card.jsx";
 import useAuth from "../hooks/useAuth";
 import Sidebar from "../components/Sidebar/Sidebar";
@@ -13,7 +14,7 @@ import Avatar from "react-avatar";
 
 function dashboard() {
   const { logout } = useAuth();
-  const [walletConnected, setWalletConnected] = useState(0);
+  const [walletConnected, setWalletConnected] = useState(false);
 
   const electionQuery = collection(db, "Elections");
   const [docs, loading, error] = useCollectionData(electionQuery);
@@ -30,6 +31,7 @@ function dashboard() {
   });
   const [account, setAccount] = useState("None"); //for smart contract
 
+  //avatar
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -44,6 +46,7 @@ function dashboard() {
     };
   }, []);
 
+  //details fetch
   useEffect(() => {
     const getElections = async () => {
       const getElections = await getDocs(electionQuery);
@@ -67,6 +70,13 @@ function dashboard() {
     };
     getElections();
     renderButton();
+  }, []);
+
+  //button switch
+  useEffect(() => {
+    // Retrieve the button visibility from local storage on component mount
+    const buttonVisibility = localStorage.getItem('walletConnected');
+    setWalletConnected(buttonVisibility === 'true');
   }, []);
 
   console.log("CardDetails", cardDetails);
@@ -106,28 +116,30 @@ function dashboard() {
       setState({ provide, signer, contract });
 
       await getProviderOrSigner();
-      setWalletConnected(1);
-      localStorage.setItem("walletConnected", 1);
+      const visibility = !walletConnected
+      setWalletConnected(visibility);
+      localStorage.setItem("walletConnected", visibility.toString());
     } catch (err) {
       console.error(err);
     }
   };
 
   const disconnectWallet = () => {
-    setWalletConnected(0);
-    localStorage.setItem("walletConnected", 0);
+    const visibility = !walletConnected
+    setWalletConnected(visibility);
+    localStorage.setItem("walletConnected", visibility.toString());
     
   };
 
   const renderButton = () => {
-    const connected = Number(localStorage.getItem("walletConnected"));
+    const connected = localStorage.getItem("walletConnected");
     return (
       <button
         className="bg-[#bd3fb8] mt-[1px] fixed px-6 py-2 rounded-xl
       text-white font-semibold text-sm top-4 z-50 right-[10rem]"
         onClick={connected ? disconnectWallet : connectWallet}
       >
-        {connected ? "Disconnect Wallet" : "Connect Wallet"}
+        {walletConnected ? "Disconnect Wallet" : "Connect Wallet"}
       </button>
     );
   };
@@ -166,7 +178,7 @@ function dashboard() {
             You can vote for only one candidate
           </p>
         </div>
-
+        
         {loading && "Loading..."}
         {elections &&
           elections.map((doc) => (
@@ -174,8 +186,9 @@ function dashboard() {
               <div className="flex mt-5  mx-[13px]">
                 <div className="w-[10px] h-[10px] ml-5 mt-[6.7px] bg-[#93278F] rounded-full"></div>
                 <span className="font-semibold px-2">{doc.title}</span>
+                <div className="font-semibold px-10 right-8"><Countdown targetDate={doc.duration} /></div>
               </div>
-
+              
               <div className="flex flex-row justify-around mt-4">
                 {cardDetails &&
                   cardDetails.map(
