@@ -10,6 +10,7 @@ import { db, auth } from "../utils/Firebase";
 import { ethers } from "ethers";
 import abi from "../contract/new_vote.json";
 import Avatar from "react-avatar";
+import Countdown from "../components/Card/Countdown"
 
 function dashboard() {
   const { logout } = useAuth();
@@ -174,6 +175,8 @@ function dashboard() {
               <div className="flex mt-5  mx-[13px]">
                 <div className="w-[10px] h-[10px] ml-5 mt-[6.7px] bg-[#93278F] rounded-full"></div>
                 <span className="font-semibold px-2">{doc.title}</span>
+                <div className="font-semibold px-10 right-0"><Countdown targetDate={doc.duration}/></div>
+
               </div>
 
               <div className="flex flex-row justify-around mt-4">
