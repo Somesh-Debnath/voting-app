@@ -47,10 +47,10 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
       }
     };
     checkVoted();
-  }, []);
+  }, [user?.uid]);
 
   const renderButton = () => {
-    if (walletConnected) {
+    if (walletConnected && !voted) {
       return (
         <button
           className={`bg-[#93278F] text-white px-8 py-2
@@ -76,20 +76,22 @@ function Card({ state, walletConnected, Name, role, indx, eid, title }) {
       console.log("Successfully voted");
       const noOfVotes = await contract.getCountOfVotes(indx);
       console.log("no of votes", noOfVotes.toString());
+      const docRef = doc(db, "Elections", eid, "Candidates", indx);
+      updateDoc(docRef, {
+        count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),
+      });
+      alert("Successfully Voted for " + Name);
+      const docRef2 = doc(db, "users", user?.uid);
+      updateDoc(docRef2, {
+        voted: arrayUnion(eid),
+      });
+      //window.location.reload();
     } catch (err) {
       console.log(err);
     }
 
-    const docRef = doc(db, "Elections", eid, "Candidates", indx);
-    updateDoc(docRef, {
-      count: voted ? arrayRemove(user?.uid) : arrayUnion(user?.uid),
-    });
-    alert("Successfully Voted for " + Name);
-    const docRef2 = doc(db, "users", user?.uid);
-    updateDoc(docRef2, {
-      voted: arrayUnion(eid),
-    });
-    setIsButtonDisabled(true);
+   
+    
   };
 
   return (
