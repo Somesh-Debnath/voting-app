@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { db } from "../../utils/Firebase";
 import { AppContext, AppContextType } from "../../pages/_app";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 
 export interface Person {
   id: number;
@@ -33,10 +33,12 @@ const FormCard = () => {
 
   async function handleClick() {
     setCardDetails(people);
+    toast.success("Candidates Added Successfully")
   }
 
   return (
     <div className=" w-full flex flex-col items-center justify-center overflow-auto">
+      <div><Toaster/></div>
       <h1 className="font-bold text-2xl">Add Candidates</h1>
       {people.map((p, index) => {
         return (
@@ -117,7 +119,7 @@ const FormCard = () => {
                 );
               }}
             >
-              x
+              x 
             </button>
           </div>
         );
@@ -146,7 +148,7 @@ const FormCard = () => {
         <button
           onClick={() => {
             handleClick();
-            toast.success("Candidates Added Successfully");
+            
           }}
           className="bg-[#93278F]
     rounded-xl px-9 py-3 text-white font-semibold mt-4"
@@ -154,6 +156,7 @@ const FormCard = () => {
         >
           Submit Details
           {/* add toast  - https://react-hot-toast.com/*/}
+          
          
         </button>
       </div>

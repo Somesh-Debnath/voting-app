@@ -76,6 +76,7 @@ function adminDashboard() {
 
         {/*display create election button* if there are no elections*/}
         {elections.length === 0 && (
+          
           <div className="flex flex-col items-center justify-center mt-20">
             <h1 className="font-bold text-2xl">No Elections</h1>
             <p className="px-1 text-sm font-normal mt-2 text-gray-500">
@@ -113,6 +114,7 @@ function adminDashboard() {
                           Image={can.Image}
                           eid={doc.id}
                           indx={can.id}
+                          title={doc.title}
                         />
                       )
                   )}

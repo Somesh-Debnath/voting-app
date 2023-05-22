@@ -104,7 +104,7 @@ function ElectionStats() {
     const minHue = 260; // Minimum hue for violet
     const maxHue = 300; // Maximum hue for violet
     const saturation = Math.floor(Math.random() * 51) + 50; // Random saturation value between 50 and 100
-    const lightness = Math.floor(Math.random() * 21) + 40; // Random lightness value between 40 and 60
+    const lightness = Math.floor(Math.random() * 41) + 40; // Random lightness value between 40 and 60
     const hue = Math.floor(Math.random() * (maxHue - minHue + 1)) + minHue; // Random hue value within the violet range
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
@@ -149,6 +149,10 @@ function ElectionStats() {
           Election Stats
         </Typography>
         <Divider />
+        
+        <Typography variant="h6" component="h2" align = "center" sx={{ color:"#2F0745", fontWeight: "bold", mt:"10px", mb: "20px"}} gutterBottom>
+          
+        </Typography>
         <Typography variant="h6" component="h2" align = "center" sx={{ color:"#2F0745", fontWeight: "bold", mt:"10px", mb: "20px"}} gutterBottom>
           {elections[0]?.title}
         </Typography>
