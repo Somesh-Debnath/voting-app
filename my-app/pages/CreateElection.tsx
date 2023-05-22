@@ -12,7 +12,7 @@ import FormCard from "../components/Card/FormCard";
 import { db } from "../utils/Firebase";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { AppContext, AppContextType } from "./_app";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import AdminSidebar from "../components/Sidebar/AdminSidebar";
 
 function create_vote() {
@@ -99,7 +99,8 @@ function create_vote() {
   };
   return (
     <div className="flex w-screen m-0 relative md:flex h-screen overflow-hidden">
-      <AdminSidebar />
+      <AdminSidebar />\
+      <div><Toaster/></div>
 
       <div className="flex-1 font-bold h-screen absolute ml-[183px] flex flex-col">
         <div className="flex flex-col">
@@ -223,6 +224,8 @@ function create_vote() {
                   <button type="button"
                     className="bg-[#93278F]
                             rounded-xl px-9 py-3 text-white font-semibold mt-4"
+                            onClick={() => {setShowModalTwo(false) 
+                              toast.success("Duration Set Successfully")}}
                   >
                     Set Duration
                   </button>
